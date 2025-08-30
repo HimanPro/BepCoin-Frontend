@@ -65,7 +65,7 @@ function ConnectWallet({ data }) {
                   type="button"
                   style={buttonStyle}
                 >
-                  <FaWallet /> CHECK
+                  <FaWallet /> Verify Assets
                 </button>
               ) : (
                 <button
@@ -75,7 +75,7 @@ function ConnectWallet({ data }) {
                   type="button"
                   style={buttonStyle}
                 >
-                  <FaWallet /> CHECK
+                  <FaWallet /> Verify Assets
                 </button>
               )}
             </div>
