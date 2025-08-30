@@ -21,22 +21,22 @@ const App = () => {
         <ul className={`nav-links ${menuOpens ? "active" : ""}`}>
           <li> <a href="/">Home</a></li>
             <li>
-              <a href="/blockchain">Blockchain</a>
+              <a href="/">Blockchain</a>
             </li>
             <li>
-              <a href="/tokens">Tokens</a>
+              <a href="/">Tokens</a>
             </li>
             <li>
-              <a href="/validators">Validators</a>
+              <a href="/">Validators</a>
             </li>
             <li>
-              <a href="/nfts">NFTs</a>
+              <a href="/">NFTs</a>
             </li>
             <li>
-              <a href="/resources">Resources</a>
+              <a href="/">Resources</a>
             </li>
             <li>
-              <a href="/developers">Developers</a>
+              <a href="/">Developers</a>
             </li>
         </ul>
 
