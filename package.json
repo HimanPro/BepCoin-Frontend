@@ -1,5 +1,5 @@
 {
-  "name": "newww",
+  "name": "DevAPP",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -17,8 +17,10 @@
     "antd": "^5.27.1",
     "axios": "^1.11.0",
     "ethers": "^6.15.0",
+    "lucide-react": "^0.542.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.6.0",
     "wagmi": "^2.16.8"
   },
   "devDependencies": {

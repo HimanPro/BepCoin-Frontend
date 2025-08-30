@@ -1,9 +1,11 @@
 .wallet-modal .ant-modal-content {
-  background: #0f0f13;
-  border-radius: 16px;
-  border: 1px solid #2a2a3a;
+  background: rgba(15, 15, 19, 0.95);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  top: 0px;
 }
 
 .wallet-modal-content {
@@ -15,33 +17,49 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #2a2a3a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wallet-icon {
+  font-size: 24px;
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
+  background: linear-gradient(45deg, #f59e0b, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .close-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #a0a0b0;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  transition: all 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #2a2a3a;
+  background: rgba(239, 68, 68, 0.2);
   color: #fff;
+  transform: rotate(90deg);
 }
 
 .modal-body {
@@ -51,78 +69,127 @@
 .wallet-info {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .status-indicator {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 500;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .status-indicator.unverified {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 .status-indicator.verified {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 .status-icon {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
-.verification-text {
+.status-text h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.status-text p {
+  margin: 0;
   color: #a0a0b0;
-  margin: 8px 0 16px;
   font-size: 0.9rem;
 }
 
-.verify-btn, .disconnect-btn, .connect-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.verify-btn {
-  background: linear-gradient(45deg, #f59e0b, #ef4444);
-  color: white;
-}
-
-.verify-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.address-section {
-  background: #1a1a25;
+.info-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   padding: 16px;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.address-section label {
-  display: block;
+.info-card h4 {
+  margin: 0 0 16px 0;
+  font-size: 1rem;
+  font-weight: 600;
   color: #a0a0b0;
-  font-size: 0.85rem;
-  margin-bottom: 8px;
 }
 
-.address-value {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: monospace;
+  margin-bottom: 16px;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-item.full-width {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #a0a0b0;
+}
+
+.info-value {
+  font-size: 0.9rem;
+  font-weight: 500;
   word-break: break-all;
-  padding-right: 8px;
+  text-align: right;
+}
+
+.address-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.address-value {
+  flex: 1;
+  word-break: break-all;
 }
 
 .copy-btn {
@@ -132,49 +199,278 @@
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .copy-btn:hover {
-  background: #2a2a3a;
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
-.wallet-data-section {
-  background: #1a1a25;
-  padding: 16px;
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
   border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: #ef4444;
+}
+
+.tokens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.token-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.token-item:last-child {
+  border-bottom: none;
+}
+
+.token-symbol {
+  font-weight: 600;
+  color: #a0a0b0;
+}
+
+.token-balance {
+  font-family: monospace;
+}
+
+.token-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.no-tokens {
+  text-align: center;
+  padding: 16px 0;
+  color: #a0a0b0;
+  font-size: 0.9rem;
+}
+
+.network-selector select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.678);
+  border: 1px solid rgb(7, 7, 7);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.network-selector select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.verify-btn,
+.disconnect-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.verify-btn {
+  background: linear-gradient(45deg, #f59e0b, #ef4444);
+  color: white;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+}
+
+.verify-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(239, 68, 68, 0.4);
 }
 
 .disconnect-btn {
   background: rgba(239, 68, 68, 0.2);
   color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .disconnect-btn:hover {
   background: rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
 }
 
 .not-connected {
   text-align: center;
-  padding: 20px 0;
+  padding: 30px 0;
 }
 
 .not-connected .status-icon {
-  font-size: 2rem;
+  font-size: 3rem;
   margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.not-connected h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .not-connected p {
   color: #a0a0b0;
-  margin-bottom: 20px;
+  margin: 0;
+  font-size: 0.9rem;
 }
 
-.connect-btn {
-  background: linear-gradient(45deg, #6366f1, #8b5cf6);
-  color: white;
+.verification-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.connect-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+.verified-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* style.css */
+
+/* Main menu container */
+.cryptobit_menu {
+  padding: 10px 0 !important;
+  text-align: center !important;
+  font-family: Roboto, Arial, sans-serif !important;
+}
+
+/* Upper class for additional styling */
+.cryptobit_menu.upper {
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+}
+
+/* Nav list */
+.cryptobit_menu .nav_scroll {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 30px !important; /* space between items */
+}
+
+/* Nav links */
+.cryptobit_menu .nav_scroll li a {
+  color: rgb(255, 204, 0) !important;
+  text-decoration: none !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  padding: 8px 12px !important;
+  transition: color 0.3s ease !important;
+  border-bottom: 0.3s ease !important;
+  position: relative !important;
+}
+
+/* Hover effect */
+.cryptobit_menu .nav_scroll li a:hover {
+  background: rgba(255, 204, 0, 0.2) !important; /* maroon color */
+  border-radius: 4px !important; /* optional: rounded edges */
+  transition: background 0.3s ease, color 0.3s ease !important;
+}
+
+/* Optional underline animation */
+/* .cryptobit_menu .nav_scroll li a::after {
+  content: "" !important;
+  display: block !important;
+  height: 2px !important;
+  width: 0 !important;
+  background: #ffc107 !important;
+  transition: width 0.3s !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+} */
+
+.cryptobit_menu .nav_scroll li a:hover::after {
+  width: 100% !important;
+}
+
+/* Wrapper for the mobile menu */
+.custom_mobile_menu_wrapper {
+  position: fixed !important;
+  top: 80px !important;
+  right: -100% !important; /* hidden initially */
+  width: max-content !important;
+  height: max-content !important;
+  /* border: 1px solid #ffc107; */
+  background-color: #111111 !important;
+  padding: 10px !important;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5) !important;
+  transition: left 0.3s ease !important;
+  z-index: 9999 !important;
+  font-family: "Roboto", Arial, sans-serif !important;
+}
+.mobile-header {
+  /* border-bottom: 1px solid #ffc107; */
+}
+
+/* Active state (slide in) */
+.custom_mobile_menu_wrapper.active {
+  right: 20% !important;
+}
+
+/* Menu list inside wrapper */
+.custom_mobile_menu_wrapper ul {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 15px !important;
+}
+
+/* Menu links */
+.custom_mobile_menu_wrapper ul li a {
+  text-decoration: none !important;
+  color: #ffc107 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  padding: 10px 15px !important;
+  border-radius: 5px !important;
+  display: block !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Hover effect */
+.custom_mobile_menu_wrapper ul li a:hover {
+  color: #fff !important;
+  background-color: rgba(255, 204, 0, 0.2) !important; /* Mahroon */
+}
+
+/* Overlay behind menu */
+.custom_mobile_menu_overlay {
+  position: fixed !important;
+  top: 10 !important;
+  right: 20% !important;
+  width: max-content !important;
+  height: max-content !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  z-index: 9998 !important;
+  display: none !important;
+}
+
+.custom_mobile_menu_overlay.active {
+  display: block !important;
 }

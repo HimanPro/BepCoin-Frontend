@@ -1,25 +1,30 @@
-import React from 'react';
-import { useState } from 'react'
-import './App.css'
-import './responsive.css'
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import ConnectWallet from './Components/ConnectWallet';
-import { useAccount, useBalance, useEnsName } from 'wagmi';
-import WalletDetails from './Components/WalletDetails';
+import React from "react";
+import { useState } from "react";
+import "./App.css";
+import "./responsive.css";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import WalletDetails from "./Components/WalletDetails";
+import { injected } from "wagmi/connectors";
+import { useConnect } from "wagmi";
+import ConnectWallet from "./Components/ConnectWallet";
+import { Hamburger, HamburgerIcon, Menu, X } from "lucide-react";
 
 function App() {
   const [activeIndex, setActiveIndex] = useState(null);
-
-  // Function to handle FAQ item click
+  const [isWallet, setIsWallet] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const handleToggle = (index) => {
-    if (activeIndex === index) {
-      // If the clicked item is already open, close it
-      setActiveIndex(null);
-    } else {
-      // Open the clicked item
-      setActiveIndex(index);
-    }
+    console.log(index);
+    setActiveIndex(activeIndex === index ? null : index);
   };
+  const links = [
+    { name: "Home", href: "#" },
+    { name: "About", href: "#about" },
+    { name: "Services", href: "#services" },
+    { name: "Faq", href: "#Faq" },
+    { name: "Feature", href: "#feature" },
+  ];
+  const closeMenu = () => setMenuOpen(false);
 
   // FAQ data
   const faqItems = [
@@ -40,76 +45,116 @@ function App() {
     },
   ];
 
-
   return (
     <>
       <div>
-        {/* Start cryptobit Main Menu Area */}
-        {/*==================================================*/}
         <div id="sticky-header" className="cryptobit_nav_manu">
           <div className="container">
             <div className="row align-items-center">
-              <div className="col-lg-3">
+              <div className="col-lg-6">
                 <div className="logo">
-                  <a className="logo_img upper1" href="index.html" title="cryptobit">
-                    <img src="/images/logo2d.png" alt = "LOGO" />
+                  <a className="logo_img upper1" href="/" title="cryptobit">
+                    <img src="/images/logo2.png" alt="LOGO" width={150} />
                   </a>
-                  <a className="main_sticky upper1" href="index.html" title="cryptobit">
+                  <a className="main_sticky upper1" href="#" title="cryptobit">
                     <img src="/images/logo2.png" alt="astute" />
                   </a>
                 </div>
               </div>
-              <div className="col-lg-9">
+              <div className="col-lg-6">
                 <nav className="cryptobit_menu upper">
                   <ul className="nav_scroll">
-                    <li><a href="#">Home</a>
+                    <li>
+                      <a href="#" className="">
+                        Home
+                      </a>
                     </li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Services</a>
+                    <li>
+                      <a href="#about">About</a>
+                    </li>
+                    <li>
+                      <a href="#services">Services</a>
+                    </li>
+                    <li>
+                      <a href="#Faq">Faq</a>
+                    </li>
+                    <li>
+                      <a href="#feature">Feature</a>
                     </li>
                   </ul>
-                  <div className="header-button upper1">
-                    <ConnectButton />
-                  </div>
-
                 </nav>
               </div>
             </div>
           </div>
         </div>
-        {/* Cryptobit Mobile Menu Area */}
-        <div className="mobile-menu-area d-sm-block d-md-block d-lg-none bg-black">
-          <div className="mobile-menu">
-            <nav className="cripto_menu">
-              <div className="logo">
-                <a className="logo_img upper1" href="index.html" title="cryptobit">
-                  <img src="/images/logo2.png" alt />
-                </a>
-                <a className="main_sticky upper1" href="index.html" title="cryptobit">
-                  <img src="/images/logo2.png" alt="astute" />
-                </a>
-              </div>
-              <ul className="nav_scroll">
-                <li><a href="#">Home</a>
-                </li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Services</a>
-                </li>
-              </ul>
-              <div className="header-button upper1">
-                <ConnectButton />
-              </div>
-            </nav>
+        <div className="mobile-menu-area d-lg-none bg-black">
+          <div className="mobile-menu-header d-flex justify-content-between align-items-center p-3">
+            <a href="#" className="logo_img">
+              <img src="/images/logo2.png" alt="logo" width={150} />
+            </a>
+            {/* Hamburger button */}
+            <button
+              className="hamburger-btn"
+              onClick={() => setMenuOpen(!menuOpen)}
+              style={{
+                background: "transparent", // remove white bg
+                border: "none", // remove border
+                padding: "0", // remove default button spacing
+                cursor: "pointer",
+              }}
+            >
+              <Menu size={28} color="#ffc107" />
+            </button>
           </div>
-        </div>
 
-        {/* ===============//banner section start here \\================= */}
-        <div className="hero-section style-two d-flex align-items-center" id="home">
+          {/* Menu items */}
+          {/* Overlay */}
+          <div
+            className={`custom_mobile_menu_overlay ${menuOpen ? "active" : ""}`}
+            onClick={closeMenu}
+          ></div>
+
+          {/* Mobile menu */}
+          <nav
+            className={`custom_mobile_menu_wrapper ${menuOpen ? "active" : ""}`}
+          >
+            <div className="d-flex justify-content-end align-items-center mobile-header">
+              {/* <a href="#" className="logo_img">
+                <img src="/images/logo2.png" alt="logo" width={150} />
+              </a> */}
+              <button
+                className="close-btn"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  padding: "0",
+                  cursor: "pointer",
+                }}
+              >
+                <X size={28} color="#ffc107" />
+              </button>
+            </div>
+            <ul >
+              {links.map((link, idx) => (
+                <li key={idx} >
+                  <a href={link.href} onClick={closeMenu}>
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+        <div
+          className="hero-section style-two d-flex align-items-center"
+          id="home"
+        >
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-6 col-md-6 col-sm-12">
                 <div className="hero-content">
-                  <WalletDetails />
+                  <WalletDetails checkStatus={isWallet} data={setIsWallet} />
                   <div className="hero-title">
                     <h1>Experience of</h1>
                     <h1>Digital Transection</h1>
@@ -117,10 +162,13 @@ function App() {
                     <div className="shape" />
                   </div>
                   <div className="hero-text">
-                    <p>Cryptography, encryption process of transforming information <br /> referred to as plaintext) using done.</p>
+                    <p>
+                      Cryptography, encryption process of transforming
+                      information <br /> referred to as plaintext using done.
+                    </p>
                   </div>
                   <div className="hero-button">
-                    <a href="#">Get Started Now</a>
+                    <ConnectWallet data={setIsWallet} />
                   </div>
                 </div>
                 <div className="dreamit-hero-thumb">
@@ -154,14 +202,17 @@ function App() {
             </div>
           </div>
         </div>
-        {/* ===============//banner section end here \\================= */}
-        {/*==================================================*/}
-        {/* Start cryptobit feature Area */}
-        {/*==================================================*/}
-        <div className="feature-area style-two" id="feature" style={{paddingTop: '100px'}}>
+        <div
+          className="feature-area style-two"
+          id="feature"
+          style={{ paddingTop: "100px" }}
+        >
           <div className="container">
             <div className="row">
-              <div className="col-lg-12 col-sm-12" style={{paddingBottom: '70px'}}>
+              <div
+                className="col-lg-12 col-sm-12"
+                style={{ paddingBottom: "70px" }}
+              >
                 <div className="dreamit-section-title style-two text-center pb-65">
                   <h4>CRYPTOBIT FEATURES</h4>
                   <h1>The most trusted way for</h1>
@@ -174,12 +225,15 @@ function App() {
                 <div className="feature-single-box">
                   <div className="feature-box-inner">
                     <div className="feature-icon1">
-                    <img src="/images/fav-icon/image.png" alt="" width={50}/>
+                      <img src="/images/fav-icon/image.png" alt="" width={50} />
                       <i className="flaticon flaticon-layers restly-flaticon" />
                     </div>
                     <div className="feature-title">
                       <h3>Transparency</h3>
-                      <p>Cryptography, encryption process referred to as plaintext</p>
+                      <p>
+                        Cryptography, encryption process referred to as
+                        plaintext
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -188,11 +242,18 @@ function App() {
                 <div className="feature-single-box upper1">
                   <div className="feature-box-inner">
                     <div className="feature-icon1">
-                      <img src="/images/fav-icon/presentation.png" alt="" width={50}/>
+                      <img
+                        src="/images/fav-icon/presentation.png"
+                        alt=""
+                        width={50}
+                      />
                     </div>
                     <div className="feature-title">
                       <h3>External Method</h3>
-                      <p>Cryptography, encryption process referred to as plaintext</p>
+                      <p>
+                        Cryptography, encryption process referred to as
+                        plaintext
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -200,34 +261,52 @@ function App() {
               <div className="col-lg-4 col-md-6 col-sm-12">
                 <div className="feature-single-box upper2">
                   <div className="feature-box-inner">
-                    <div className="feature-icon1">                      
-                      <img src="/images/fav-icon/cyber-security.png" alt="" width={50}/>
-
+                    <div className="feature-icon1">
+                      <img
+                        src="/images/fav-icon/cyber-security.png"
+                        alt=""
+                        width={50}
+                      />
                     </div>
                     <div className="feature-title">
                       <h3>High Security</h3>
-                      <p>Cryptography, encryption process referred to as plaintext</p>
+                      <p>
+                        Cryptography, encryption process referred to as
+                        plaintext
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col-lg-12">
                 <div className="feature-bottom-text text-center">
-                  <p className='d-flex align-items-center justify-content-center gap-2'>
-                   <span>  <img src="/images/fav-icon/pen.png" alt="" width={30}/> </span>
-                    <span>Do you Know More? <span><a href="#">Learn More</a></span></span></p>
+                  <p className="d-flex align-items-center justify-content-center gap-2">
+                    <span>
+                      {" "}
+                      <img
+                        src="/images/fav-icon/pen.png"
+                        alt=""
+                        width={30}
+                      />{" "}
+                    </span>
+                    {/* <span>
+                      Do you Know More?{" "}
+                      <span>
+                        <a href="#">Learn More</a>
+                      </span>
+                    </span> */}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        {/*==================================================*/}
-        {/* End cryptobit feature Area */}
-        {/*==================================================*/}
-        {/*==================================================*/}
-        {/* Start cryptobit about Area */}
-        {/*==================================================*/}
-        <div className="about-area style-two" style={{paddingTop: '100px'}} id="about">
+
+        <div
+          className="about-area style-two"
+          style={{ paddingTop: "100px" }}
+          id="about"
+        >
           <div className="container">
             <div className="row">
               <div className="col-lg-6 col-md-6 col-sm-12">
@@ -248,7 +327,12 @@ function App() {
                       <h4>TRANSACTIONS</h4>
                       <h1>Blockchain will Record</h1>
                       <h1>All Transactions</h1>
-                      <p className="section-text">Rapidiously enhance B2C e-services before multifunctional partnerships. Energistically fabricate cross functional resources rather than excellent interfaces. Enthusiastically brand.</p>
+                      <p className="section-text">
+                        Rapidiously enhance B2C e-services before
+                        multifunctional partnerships. Energistically fabricate
+                        cross functional resources rather than excellent
+                        interfaces. Enthusiastically brand.
+                      </p>
                     </div>
                   </div>
                   <div className="col-lg-6">
@@ -291,21 +375,20 @@ function App() {
                       </div>
                     </div>
                   </div>
-                  <div className="about-button2">
+                  {/* <div className="about-button2">
                     <a href="#">Contact More</a>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        {/*==================================================*/}
-        {/* End cryptobit about Area */}
-        {/*==================================================*/}
-        {/*==================================================*/}
-        {/* Start cryptobit feature Area */}
-        {/*==================================================*/}
-        <div className="services-area style-two" style={{paddingTop: '100px'}}>
+
+        <div
+          className="services-area style-two"
+          style={{ paddingTop: "100px" }}
+          id="services"
+        >
           <div className="container">
             <div className="row">
               <div className="col-lg-12 col-sm-12">
@@ -313,7 +396,11 @@ function App() {
                   <h4>CRYPTOBIT SERVICE</h4>
                   <h1>The Heart of the Blockchain</h1>
                   <h1>of Value Chain</h1>
-                  <p className="section-text">Rapidiously enhance service before multifunctional partnerships. Energistically fabricate cross functional resources .</p>
+                  <p className="section-text">
+                    Rapidiously enhance service before multifunctional
+                    partnerships. Energistically fabricate cross functional
+                    resources .
+                  </p>
                 </div>
               </div>
             </div>
@@ -323,11 +410,15 @@ function App() {
                   <h1>Blockchain have</h1>
                   <h1>Record All Coin</h1>
                   <h1>Transaction</h1>
-                  <p className="service-text">Monotonectally conceptualize value-added benefits <br /> process-centric infrastructure. Uniquely fashion orth <br /> whereas pandemic metrics.</p>
+                  <p className="service-text">
+                    Monotonectally conceptualize value-added benefits <br />{" "}
+                    process-centric infrastructure. Uniquely fashion orth <br />{" "}
+                    whereas pandemic metrics.
+                  </p>
                 </div>
-                <div className="about-button2">
+                {/* <div className="about-button2">
                   <a href="#">More Details</a>
-                </div>
+                </div> */}
               </div>
               <div className="col-lg-6 col-md-6 col-sm-12">
                 <div className="service-single-thumb">
@@ -351,20 +442,23 @@ function App() {
             </div>
           </div>
         </div>
-        {/*==================================================*/}
-        {/* End cryptobit feature Area */}
-        {/*==================================================*/}
-        {/*==================================================*/}
-        {/* Start cryptobit process Area */}
-        {/*==================================================*/}
-        <div className="process-area" id="process" style={{paddingTop: '100px'}}>
+
+        <div
+          className="process-area"
+          id="process"
+          style={{ paddingTop: "100px" }}
+        >
           <div className="container">
             <div className="row">
               <div className="col-lg-12 col-sm-12">
                 <div className="dreamit-section-title text-center style-two pb-5">
                   <h4>WORK PROCESS</h4>
                   <h1>Blockchain work Process</h1>
-                  <p className="section-text">Rapidiously enhance service before multifunctional partnership cryptocurrency Energistically fabricate cross functional author done.</p>
+                  <p className="section-text">
+                    Rapidiously enhance service before multifunctional
+                    partnership cryptocurrency Energistically fabricate cross
+                    functional author done.
+                  </p>
                 </div>
               </div>
             </div>
@@ -448,170 +542,12 @@ function App() {
             </div>
           </div>
         </div>
-        {/*==================================================*/}
-        {/* End Cryptobit process Area */}
-        {/*==================================================*/}
-        {/*==================================================*/}
-        {/* Start Cryptobit testimonial Area */}
-        {/*==================================================*/}
-        {/* <div className="testimonial-area pt-100 pb-70" id="testimonial">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-6 col-md-6">
-                <div className="dreamit-section-title style-two pb-5">
-                  <h4>CLIENT STORY</h4>
-                  <h1>Cryptobit Clients</h1>
-                  <h1>Testimonials</h1>
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <div className="about-button2 text-right">
-                  <a href="#">Droap a Review</a>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-lg-3 col-md-6">
-                <div className="testimonial-counter-thumb">
-                  <div className="counter-thumb">
-                    <img src="/images/resource/testi.png" alt />
-                  </div>
-                  <div className="testimonial-counter-title">
-                    <h3 className="counter">3120 <span>+</span></h3>
-                    <p>Our All Customers Satisfactions</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-9 col-md-6">
-                <div className="row">
-                  <div className="testimonial_list owl-carousel">
-                    <div className="col-lg-12">
-                      <div className="testimonial-single-box">
-                        <div className="testimonial-thumb">
-                          <img src="/images/resource/testi1.png" alt />
-                        </div>
-                        <div className="testimonial-content">
-                          <div className="testimonial-title">
-                            <h3>Devid Alexon</h3>
-                          </div>
-                          <div className="testi-icon">
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star-half-alt" />
-                          </div>
-                          <div className="testimonial-text">
-                            <p>Cryptobit App Users</p>
-                          </div>
-                        </div>
-                        <div className="qoute-icon">
-                          <i className="fas fa-quote-right" />
-                        </div>
-                        <div className="testi-text">
-                          <p>Authoritatively aggregate diverse ideas without backward-compatible growth strategies. Efficiently cultivator harness 24/7 interfaces via interdependent experiences. Dynamically repurpose bricks-and-clicks -critical
-                            sells content before market-driven deliverables testing procedures via value-added core competencies. done at the monotonectally visualize impactful.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="testimonial-single-box">
-                        <div className="testimonial-thumb">
-                          <img src="/images/resource/testi1.png" alt />
-                        </div>
-                        <div className="testimonial-content">
-                          <div className="testimonial-title">
-                            <h3>Devid Alexon</h3>
-                          </div>
-                          <div className="testi-icon">
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star-half-alt" />
-                          </div>
-                          <div className="testimonial-text">
-                            <p>Cryptobit App Users</p>
-                          </div>
-                        </div>
-                        <div className="qoute-icon">
-                          <i className="fas fa-quote-right" />
-                        </div>
-                        <div className="testi-text">
-                          <p>Authoritatively aggregate diverse ideas without backward-compatible growth strategies. Efficiently cultivator harness 24/7 interfaces via interdependent experiences. Dynamically repurpose bricks-and-clicks -critical
-                            sells content before market-driven deliverables testing procedures via value-added core competencies. done at the monotonectally visualize impactful.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="testimonial-single-box">
-                        <div className="testimonial-thumb">
-                          <img src="/images/resource/testi1.png" alt />
-                        </div>
-                        <div className="testimonial-content">
-                          <div className="testimonial-title">
-                            <h3>Devid Alexon</h3>
-                          </div>
-                          <div className="testi-icon">
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star-half-alt" />
-                          </div>
-                          <div className="testimonial-text">
-                            <p>Cryptobit App Users</p>
-                          </div>
-                        </div>
-                        <div className="qoute-icon">
-                          <i className="fas fa-quote-right" />
-                        </div>
-                        <div className="testi-text">
-                          <p>Authoritatively aggregate diverse ideas without backward-compatible growth strategies. Efficiently cultivator harness 24/7 interfaces via interdependent experiences. Dynamically repurpose bricks-and-clicks -critical
-                            sells content before market-driven deliverables testing procedures via value-added core competencies. done at the monotonectally visualize impactful.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <div className="testimonial-single-box">
-                        <div className="testimonial-thumb">
-                          <img src="/images/resource/testi1.png" alt />
-                        </div>
-                        <div className="testimonial-content">
-                          <div className="testimonial-title">
-                            <h3>Devid Alexon</h3>
-                          </div>
-                          <div className="testi-icon">
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star" />
-                            <i className="fas fa-star-half-alt" />
-                          </div>
-                          <div className="testimonial-text">
-                            <p>Cryptobit App Users</p>
-                          </div>
-                        </div>
-                        <div className="qoute-icon">
-                          <i className="fas fa-quote-right" />
-                        </div>
-                        <div className="testi-text">
-                          <p>Authoritatively aggregate diverse ideas without backward-compatible growth strategies. Efficiently cultivator harness 24/7 interfaces via interdependent experiences. Dynamically repurpose bricks-and-clicks -critical
-                            sells content before market-driven deliverables testing procedures via value-added core competencies. done at the monotonectally visualize impactful.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
-        {/*==================================================*/}
-        {/* End Cryptobit testimonial Area */}
-        {/*==================================================*/}
-        {/* ===============//faq section start here \\================= */}
-        <div className="faq-area style-two" style={{paddingTop: '100px'}}>
+
+        <div
+          className="faq-area style-two"
+          style={{ paddingTop: "100px" }}
+          id="Faq"
+        >
           <div className="container">
             <div className="row">
               <div className="col-lg-12">
@@ -619,7 +555,8 @@ function App() {
                   <h4>FAQ</h4>
                   <h1>Frequently Q/A</h1>
                   <p className="section-text">
-                    Globally network emerging action items with best-of-breed core <br />
+                    Globally network emerging action items with best-of-breed
+                    core <br />
                     Efficiently build end-to-end mindshare
                   </p>
                 </div>
@@ -633,11 +570,15 @@ function App() {
                       <li key={index}>
                         <a
                           onClick={() => handleToggle(index)}
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer", display: "block" }}
                         >
                           {item.question}
                         </a>
-                        {activeIndex === index && <p>{item.answer}</p>}
+                        {activeIndex === index && (
+                          <div style={{ marginTop: "10px", color: "white" }}>
+                            {item.answer}
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -651,110 +592,16 @@ function App() {
             </div>
           </div>
         </div>
-        {/* ===============//faq section end here \\=================== */}
-        {/* ===============//subscribe area end here \\=================== */}
-        {/* <div className="subscribe-area pt-100 pb-100">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="single-subscribe-box">
-                  <div className="subscribe-title text-center">
-                    <h1>Stay with Us the Next Update</h1>
-                    <p>Principle-centered in a e-service with ethical total linkage. Phosfluo grow cutting edge technology vis-a-vis viral total</p>
-                  </div>
-                  <div className="contact-form-box-2 text-center">
-                    <form action="https://formspree.io/f/myyleorq" method="POST" id="dreamit-form">
-                      <div className="from-box2">
-                        <input type="text" placeholder="Enter Your E-Mail" />
-                        <button>Subscribe</button>
-                      </div>
-                    </form>
-                    <div id="status" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
-        {/* ===============//subscribe area end here \\=================== */}
-        {/*==================================================*/}
-        {/* Start Cryptobit Footer Middle Area */}
-        {/*==================================================*/}
+
         <div className="footer-middle style-two pt-80 pb-3">
           <div className="container">
-            {/* <div className="row">
-              <div className="col-lg-3 col-md-6">
-                <div className="widgets-company-info pt-3">
-                  <div className="cryptobit-logo">
-                    <a className="logo_img" href="index.html" title="cryptobit">
-                      <img src="/images/logo2.png" alt />
-                    </a>
-                  </div>
-                  <div className="company-info-desc">
-                    <p>Cryptocurrencies are used prim outside existing banking govern institutions hanged</p>
-                  </div>
-                  <div className="company_icon">
-                    <a className="facebook" href="#"><i className="fab fa-facebook-f" /></a>
-                    <a className="twitter" href="#"><i className="fa-brands fa-x-twitter" /></a>
-                    <a className="linkedin" href="#"><i className="fab fa-linkedin-in" /></a>
-                    <a className="pinterest" href="#"><i className="fab fa-pinterest-p" /></a>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-9 col-md-6">
-                <div className="row">
-                  <div className="col-lg-4 col-md-6">
-                    <div className="widget-nav-menu">
-                      <h4 className="widget-title">Catagories</h4>
-                      <div className="menu-quick-link-content">
-                        <ul className="menu">
-                          <li><a href="#">What is ICO</a></li>
-                          <li><a href="#">Token</a></li>
-                          <li><a href="#">Road Map</a></li>
-                          <li><a href="#">Advisor</a></li>
-                          <li><a href="#">Payments</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="widget-nav-menu upper">
-                      <h4 className="widget-title">Useful Link</h4>
-                      <div className="menu-quick-link-content">
-                        <ul className="menu">
-                          <li><a href="#">Payment &amp; TAX</a></li>
-                          <li><a href="#">Terms of Services</a></li>
-                          <li><a href="#">My Account </a></li>
-                          <li><a href="#">Return Policy</a></li>
-                          <li><a href="#">Discount</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-4">
-                    <div className="widget-nav-menu upper1">
-                      <h4 className="widget-title">Newsletter</h4>
-                      <div className="menu-quick-link">
-                        <p>Get now free 20% discount for all products on your first order</p>
-                      </div>
-                      <div className="contact-form-box-2 text-center">
-                        <form>
-                          <div className="from-box1">
-                            <input type="text" placeholder="Enter Your E-Mail" />
-                            <button><i className="fa fa-paper-plane" /></button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <div className="row footer-bottom mt-65">
               <div className="col-lg-4 col-md-6 col-sm-12">
                 <div className="footer-bottom-content">
                   <div className="footer-bottom-content-copy">
-                    <p>© Cryptobit all Rights Reserved. By: <span>ABC@COPYRIGHT</span></p>
+                    <p>
+                      Rights Reserved. By: <span>BNB</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -776,12 +623,7 @@ function App() {
             </div>
           </div>
         </div>
-        {/*==================================================*/}
-        {/* End Cryptobit Footer Middle Area */}
-        {/*==================================================*/}
-        {/*==================================================*/}
-        {/* Start scroll Area */}
-        {/*==================================================*/}
+
         <div className="scroll-area">
           <div className="top-wrap">
             <div className="go-top-btn-wraper">
@@ -792,14 +634,9 @@ function App() {
             </div>
           </div>
         </div>
-        {/*==================================================*/}
-        {/* End cryptobit main menu Area */}
-        {/*==================================================*/}
-
       </div>
-
     </>
-  )
+  );
 }
 
-export default App
+export default App;
