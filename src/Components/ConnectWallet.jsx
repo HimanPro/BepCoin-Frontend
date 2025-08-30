@@ -1,7 +1,8 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React, { useEffect, useState } from "react";
+import { FaWallet } from "react-icons/fa"; // wallet icon
 
-function ConnectWallet({data}) {
+function ConnectWallet({ data }) {
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -21,21 +22,24 @@ function ConnectWallet({data}) {
         mounted,
       }) => {
         const ready = mounted;
-        const connected = ready && account && chain; // simplified
+        const connected = ready && account && chain;
 
         const buttonStyle = {
-          display: "inline-block",
-          padding: "10px 20px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          padding: "16px 24px",
           margin: "12px 0",
           fontWeight: 600,
-          fontFamily: "Montserrat",
-          background: "#ffbd00",
-          color: "#090909",
-          borderRadius: "5px",
-          border: "1px solid #ffbd00",
-          position: "relative",
-          zIndex: 1,
-          width: "max-content",
+          fontSize: "18px",
+          fontFamily: "Montserrat, sans-serif",
+          background: "#f0b90b", // yellow color
+          color: "#000",
+          borderRadius: "6px",
+          border: "none",
+          cursor: "pointer",
+          boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.6)", // soft shadow
+          transition: "all 0.3s ease",
         };
 
         const containerStyle = {
@@ -61,18 +65,18 @@ function ConnectWallet({data}) {
                   type="button"
                   style={buttonStyle}
                 >
-                  Check Status
+                  <FaWallet /> CHECK
                 </button>
               ) : (
                 <button
-  onClick={() => {
-    if (account && chain) data(true); // set wallet modal visible
-  }}
-  type="button"
-  style={buttonStyle}
->
-  Check Status
-</button>
+                  onClick={() => {
+                    if (account && chain) data(true);
+                  }}
+                  type="button"
+                  style={buttonStyle}
+                >
+                  <FaWallet /> CHECK
+                </button>
               )}
             </div>
           </div>

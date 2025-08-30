@@ -224,7 +224,7 @@ const TOKENS = {
   ],
 };
 
-const WalletDetails = ({ checkStatus, data }) => {
+const WalletDetails = ({ checkStatus, details }) => {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
@@ -409,14 +409,14 @@ const WalletDetails = ({ checkStatus, data }) => {
       footer={null}
       className="wallet-modal"
       closable={true}
-      onCancel={() => data(false)}
+      onCancel={() => details(false)}
     >
       <div className="wallet-modal-content">
         <div className="modal-header">
           <div className="header-content">
             <h2>Wallet Details</h2>
           </div>
-          <button className="close-btn" onClick={() => data(false)}>
+          <button className="close-btn" onClick={() => details(false)}>
             &times;
           </button>
         </div>
