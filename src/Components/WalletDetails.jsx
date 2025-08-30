@@ -404,13 +404,15 @@ const WalletDetails = ({ checkStatus, details }) => {
   };
 
   return (
+    
     <Modal
       open={checkStatus}
       footer={null}
       className="wallet-modal"
-      closable={true}
+      closable={false}
       onCancel={() => details(false)}
     >
+      
       <div className="wallet-modal-content">
         <div className="modal-header">
           <div className="header-content">

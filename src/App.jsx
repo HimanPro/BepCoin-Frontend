@@ -19,25 +19,69 @@ const App = () => {
 
         {/* Desktop Nav */}
         <ul className={`nav-links ${menuOpens ? "active" : ""}`}>
-          <li> <a href="/">Home</a></li>
-            <li>
-              <a href="/">Blockchain</a>
-            </li>
-            <li>
-              <a href="/">Tokens</a>
-            </li>
-            <li>
-              <a href="/">Validators</a>
-            </li>
-            <li>
-              <a href="/">NFTs</a>
-            </li>
-            <li>
-              <a href="/">Resources</a>
-            </li>
-            <li>
-              <a href="/">Developers</a>
-            </li>
+          <li>
+            <a
+              href="https://bscscan.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Home
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://bscscan.com/txs"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Blockchain
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://bscscan.com/tokens"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Tokens
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://bscscan.com/validators"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Validators
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://bscscan.com/nft-top-contracts"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NFTs
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://bscscan.com/charts"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resources
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://bscscan.com/verifyContract"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Developers
+            </a>
+          </li>
         </ul>
 
         {/* Hamburger Menu */}
