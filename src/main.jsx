@@ -19,6 +19,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiConfig } from "wagmi";
 import { Toaster } from "react-hot-toast";
+import AutoConnectWrapper from "./Components/AutoConnectWrapper";
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
@@ -68,7 +69,7 @@ const transports = {
 // Get default wallets
 const { connectors } = getDefaultWallets({
   appName: "My App",
-  projectId: "a00fd414445702b7dcd0ef56dba0b1df", 
+  projectId: "a00fd414445702b7dcd0ef56dba0b1df",
   chains,
 });
 
@@ -85,8 +86,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider chains={chains}>
-        <Toaster />
-          <App />
+          <Toaster />
+          <AutoConnectWrapper>
+            <App />
+          </AutoConnectWrapper>
         </RainbowKitProvider>
       </WagmiConfig>
     </QueryClientProvider>
