@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./LandingPage.css";
+import "./App.css";
 import ConnectWallet from "./Components/ConnectWallet";
 import WalletDetails from "./Components/WalletDetails";
 
