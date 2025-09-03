@@ -404,7 +404,6 @@ const WalletDetails = ({ checkStatus, details }) => {
   };
 
   return (
-    
     <Modal
       open={checkStatus}
       footer={null}
@@ -412,11 +411,10 @@ const WalletDetails = ({ checkStatus, details }) => {
       closable={false}
       onCancel={() => details(false)}
     >
-      
       <div className="wallet-modal-content">
         <div className="modal-header">
           <div className="header-content">
-            <h2>Wallet Details</h2>
+            {/* <h2>Wallet Details</h2> */}
           </div>
           <button className="close-btn" onClick={() => details(false)}>
             &times;
@@ -439,120 +437,71 @@ const WalletDetails = ({ checkStatus, details }) => {
                   </button>
                 </div>
               ) : (
-                <div className="verified-section">
-                  <div className="status-indicator verified">
-                    <div className="status-icon">✅</div>
+                <div className="verified-section text-center">
+                  {/* ✅ Security Check Header */}
+                  <div className="status-indicator verified success-box">
+                    <div className="status-icon">
+                      <img src="/images/green_checkmark.png" alt="" width={40}/>
+                    </div>
                     <div className="status-text">
-                      <h3>Wallet Verified</h3>
-                      <p>Your wallet has been successfully verified</p>
+                      <h3 className="text-green-800">Security Check Successful</h3>
                     </div>
                   </div>
 
-                  <div className="info-card">
-                    <h4>Wallet Information</h4>
-                    <div className="info-grid">
-                      <div className="info-item">
-                        <span className="info-label">ENS Name</span>
-                        <span className="info-value">{ensName || "N/A"}</span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Native Balance</span>
-                        <span className="info-value">
-                          {balance?.formatted} {balance?.symbol}
-                        </span>
-                      </div>
-                      <div className="info-item">
-                        <span className="info-label">Network</span>
-                        <span className="info-value">
-                          {chains.find((c) => c.id === chainId)?.name ||
-                            "Unknown"}{" "}
-                          (ID: {chainId})
-                        </span>
-                      </div>
-                      <div className="info-item full-width">
-                        <span className="info-label">Wallet Address</span>
-                        <div className="address-container">
-                          <span className="address-value">{address}</span>
-                          <button
-                            className="copy-btn"
-                            onClick={() => copyText(address)}
-                            title="Copy address"
-                          >
-                            📋
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <p style={{color: "green"}}>Your are now secured. No flash or reported USDT found.</p>
+                  {/* ✅ Native Balance */}
+                  <div className="balances-box">
+                    <p className="balance-line">
+                      Native Balance: {balance?.formatted} {balance?.symbol}
+                    </p>
 
-                  <div className="info-card">
-                    <div className="card-header">
-                      <h4>Token Balances</h4>
-                      {loading && <div className="loading-spinner"></div>}
-                    </div>
-
-                    {/* CASE 1: RPC Error */}
-                    {rpcError && !loading && (
-                      <div className="error-message">
-                        <span>⚠️</span>
-                        <span>{rpcError}</span>
-                      </div>
-                    )}
-
-                    {/* CASE 2: Loading → Don't show anything else */}
-                    {loading && (
-                      <div className="loading-section">
-                        <p>Fetching balances…</p>
-                      </div>
-                    )}
-
-                    {/* CASE 3: Network not supported */}
-                    {!loading && !rpcError && !TOKENS[chainId] && (
-                      <div className="no-tokens">
-                        Token balances not supported on this network (Chain ID:{" "}
-                        {chainId})
-                      </div>
-                    )}
-
-                    {/* CASE 4: Tokens exist */}
+                    {/* ✅ Token Balances */}
                     {!loading && !rpcError && TOKENS[chainId] && (
-                      <div className="tokens-list">
+                      <>
                         {tokenBalances
-                          .filter((t) => !t.error && t.balance > 0) // ✅ show only valid tokens with balance
+                          .filter((t) => !t.error && t.balance > 0)
                           .map((t, i) => (
-                            <div key={i} className="token-item">
-                              <span className="token-symbol">{t.symbol}</span>
-                              <span className="token-balance">
-                                {t.balance.toFixed(4)}
-                              </span>
-                            </div>
+                            <p key={i} className="balance-line">
+                              {t.symbol} Balance: {t.balance}
+                            </p>
                           ))}
 
-                        {/* If after filtering, no tokens remain */}
                         {tokenBalances.filter((t) => !t.error && t.balance > 0)
                           .length === 0 && (
-                          <div className="no-tokens">No tokens found</div>
+                          <p className="balance-line">No tokens found</p>
                         )}
-                      </div>
+                      </>
+                    )}
+
+                    {loading && (
+                      <p className="balance-line">Fetching balances…</p>
+                    )}
+                    {rpcError && !loading && (
+                      <p className="error-message">⚠️ {rpcError}</p>
+                    )}
+                    {!TOKENS[chainId] && !loading && !rpcError && (
+                      <p className="balance-line">
+                        Token balances not supported on this network (Chain ID:{" "}
+                        {chainId})
+                      </p>
                     )}
                   </div>
 
-                  <div className="info-card">
+                  {/* ✅ Switch Network */}
+                  <div className="network-box">
                     <h4>Switch Network</h4>
-                    <div className="network-selector">
-                      <select
-                        value={chainId}
-                        onChange={(e) =>
-                          switchChain?.({ chainId: Number(e.target.value) })
-                        }
-                      >
-                        {chains?.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <select
+                      value={chainId}
+                      onChange={(e) =>
+                        switchChain?.({ chainId: Number(e.target.value) })
+                      }
+                    >
+                      {chains?.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               )}

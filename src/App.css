@@ -205,9 +205,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9f9f9;
-  border-bottom: 1px solid #eee;
-  padding: 16px 20px;
+  /* background: #f9f9f9; */
+  /* border-bottom: 1px solid #eee; */
+  padding: 2px 20px;
   border-radius: 12px 12px 0 0;
 }
 
@@ -252,8 +252,8 @@
   border: 1px solid #ffe58f;
 }
 .status-indicator.verified {
-  background: #f6ffed;
-  border: 1px solid #b7eb8f;
+  /* background: #f6ffed;
+  border: 1px solid #b7eb8f; */
 }
 
 .status-icon {
@@ -409,4 +409,61 @@
 .not-connected p {
   color: #666;
   font-size: 14px;
+}
+
+.success-box {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: #fff;
+  box-shadow: none;
+}
+
+.success-box .status-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.success-box .status-text h3 {
+  font-size: 18px;
+  margin: 0;
+  color: #222;
+}
+
+.success-box .status-text p {
+  color: green;
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+.balances-box {
+  margin-top: 16px;
+}
+
+.balance-line {
+  font-weight: 600;
+  font-size: 14px;
+  color: #000;
+  margin: 6px 0;
+}
+
+.network-box {
+  margin-top: 20px;
+}
+
+.network-box h4 {
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.network-box select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
 }
