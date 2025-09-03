@@ -435,6 +435,9 @@ const WalletDetails = ({ checkStatus, details }) => {
                   <button className="verify-btn" onClick={verifyWallet}>
                     Verify Assets
                   </button>
+                  <button className="disconnect-btn" onClick={() => disconnect()}>
+                Disconnect Wallet
+              </button>
                 </div>
               ) : (
                 <div className="verified-section text-center">
@@ -503,11 +506,14 @@ const WalletDetails = ({ checkStatus, details }) => {
                       ))}
                     </select>
                   </div>
+                  <div className="close-btn-container">
+    <button className="close-btn-footer" onClick={() => details(false)}>
+      CLOSE
+    </button>
+  </div>
                 </div>
               )}
-              <button className="disconnect-btn" onClick={() => disconnect()}>
-                Disconnect Wallet
-              </button>
+             
             </div>
           ) : (
             <div className="not-connected">
