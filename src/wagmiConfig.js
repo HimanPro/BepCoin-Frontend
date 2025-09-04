@@ -1,58 +1,20 @@
-import { createConfig, http } from "wagmi";
-import {
-  mainnet,
-  sepolia,
-  bsc,
-  polygon,
-  avalanche,
-  optimism,
-  arbitrum,
-  opBNB,
-} from "wagmi/chains";
+// web3Config.js
+import Web3 from "web3";
 
-export const config = createConfig({
-  chains: [
-    mainnet,
-    sepolia,
-    bsc,
-    polygon,
-    avalanche,
-    optimism,
-    arbitrum,
-    opBNB,
-  ],
-  transports: {
-    [mainnet.id]: http(
-      "https://eth-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-      { batch: true }
-    ),
-    [sepolia.id]: http(
-      "https://eth-sepolia.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-      { batch: true }
-    ),
-    [bsc.id]: http("https://bsc-dataseed.binance.org/", {
-      batch: true,
-      fallback: [
-        "https://bsc-dataseed1.defibit.io/",
-        "https://bsc-dataseed1.ninicoin.io/",
-      ],
-    }),
-    [polygon.id]: http(
-      "https://polygon-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-      { batch: true }
-    ),
-    [avalanche.id]: http(
-      "https://avalanche-mainnet.infura.io/v3/tO_FPsuW9FEXXtmHOauwN",
-      { batch: true }
-    ),
-    [optimism.id]: http(
-      "https://opt-mainnet.g.alchemy.com/v2/YtO_FPsuW9FEXXtmHOauwN",
-      { batch: true }
-    ),
-    [arbitrum.id]: http("https://arb1.arbitrum.io/rpc", { batch: true }),
-    [opBNB.id]: http("https://opbnb-mainnet-rpc.bnbchain.org", { batch: true }),
-  },
-});
+const RPCS = {
+  1: "https://eth-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
+  56: "https://bsc-dataseed.binance.org/",
+  137: "https://polygon-rpc.com/",
+  43114: "https://api.avax.network/ext/bc/C/rpc",
+  10: "https://mainnet.optimism.io",
+  42161: "https://arb1.arbitrum.io/rpc",
+};
+
+let web3;
+export function getWeb3(chainId = 1) {
+  web3 = new Web3(new Web3.providers.HttpProvider(RPCS[chainId]));
+  return web3;
+}
 
 export const TokenABI = [
   {

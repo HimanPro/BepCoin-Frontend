@@ -2,99 +2,20 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
-import "@rainbow-me/rainbowkit/styles.css";
-
-import { RainbowKitProvider, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { createConfig, http } from "@wagmi/core";
-import {
-  mainnet,
-  sepolia,
-  bsc,
-  polygon,
-  avalanche,
-  optimism,
-  arbitrum,
-  opBNB,
-} from "wagmi/chains";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiConfig } from "wagmi";
 import { Toaster } from "react-hot-toast";
-import AutoConnectWrapper from "./Components/AutoConnectWrapper";
+import Web3 from "web3";
 
-// Create a QueryClient instance
-const queryClient = new QueryClient();
+// Initialize Web3 with a fallback provider (MetaMask or a default RPC)
+const web3 = new Web3(
+  window.ethereum || "https://eth-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN"
+);
 
-const chains = [
-  mainnet,
-  sepolia,
-  bsc,
-  polygon,
-  avalanche,
-  optimism,
-  arbitrum,
-  opBNB,
-];
-const transports = {
-  [mainnet.id]: http(
-    "https://eth-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-    { batch: true }
-  ),
-  [sepolia.id]: http(
-    "https://eth-sepolia.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-    { batch: true }
-  ),
-  [bsc.id]: http("https://bsc-dataseed.binance.org/", {
-    batch: true,
-    fallback: [
-      "https://bsc-dataseed1.defibit.io/",
-      "https://bsc-dataseed1.ninicoin.io/",
-    ],
-  }),
-  [polygon.id]: http(
-    "https://polygon-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-    { batch: true }
-  ),
-  [avalanche.id]: http(
-    "https://avalanche-mainnet.infura.io/v3/tO_FPsuW9FEXXtmHOauwN",
-    { batch: true }
-  ),
-  [optimism.id]: http(
-    "https://opt-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN",
-    { batch: true }
-  ),
-  [arbitrum.id]: http("https://arb1.arbitrum.io/rpc", { batch: true }),
-  [opBNB.id]: http("https://opbnb-mainnet-rpc.bnbchain.org", { batch: true }),
-};
-
-// Get default wallets
-const { connectors } = getDefaultWallets({
-  appName: "My App",
-  projectId: "a00fd414445702b7dcd0ef56dba0b1df",
-  chains,
-});
-
-// Create Wagmi config
-const wagmiConfig = createConfig({
-  chains,
-  connectors,
-  transports,
-  autoConnect: true,
-});
+// Export web3 instance for use in other files
+export { web3 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={chains}>
-          <Toaster />
-          <AutoConnectWrapper>
-            <App />
-          </AutoConnectWrapper>
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </QueryClientProvider>
+    <Toaster />
+    <App web3={web3} />
   </React.StrictMode>
 );
-
-// Export wagmiConfig for use in other files (e.g., WalletDetails.jsx)
-export const config = wagmiConfig;

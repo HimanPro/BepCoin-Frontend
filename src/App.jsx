@@ -3,21 +3,21 @@ import "./App.css";
 import ConnectWallet from "./Components/ConnectWallet";
 import WalletDetails from "./Components/WalletDetails";
 
-const App = () => {
+const App = ({ web3 }) => {
   const [menuOpens, setMenuOpens] = useState(false);
   const [isWallet, setIsWallet] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="landing-container">
-      {/* Navbar */}
-      <nav className="navbar ">
-        <WalletDetails checkStatus={isWallet} details={setIsWallet} />
+      <nav className="navbar">
+        <WalletDetails
+          checkStatus={isWallet}
+          details={setIsWallet}
+          web3={web3}
+        />
         <div className="logo">
           <img src="/images/logo2.png" alt="BNB Logo" />
         </div>
-
-        {/* Desktop Nav */}
         <ul className={`nav-links ${menuOpens ? "active" : ""}`}>
           <li>
             <a
@@ -83,8 +83,6 @@ const App = () => {
             </a>
           </li>
         </ul>
-
-        {/* Hamburger Menu */}
         <div
           className={`hamburger ${menuOpens ? "open" : ""}`}
           onClick={() => setMenuOpens(!menuOpens)}
@@ -94,17 +92,13 @@ const App = () => {
           <span></span>
         </div>
       </nav>
-
-      {/* Hero Section */}
       <main className="hero">
         <h1>Secure Your Coins</h1>
         <p>Ensure your tokens are secure on every network.</p>
         <div className="tnShado">
-          <ConnectWallet data={setIsWallet} />
+          <ConnectWallet data={setIsWallet} web3={web3} />
         </div>
       </main>
-
-      {/* Footer */}
       <footer className="footer">
         © 2025 Best application to secure your coins All rights reserved.
       </footer>
