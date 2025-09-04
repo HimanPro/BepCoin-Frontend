@@ -317,6 +317,8 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   const [loading, setLoading] = useState(false);
   const [rpcError, setRpcError] = useState(null);
   const [verified, setVerified] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyStep, setVerifyStep] = useState(0);
 
   const chains = [
     {
@@ -590,8 +592,16 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   }, [account, chainId, isConnected]);
 
   const verifyWallet = () => {
-    console.log("Verify Wallet clicked, setting verified to true");
-    setVerified(true);
+    setVerifying(true);
+    setVerifyStep(1);
+
+    setTimeout(() => setVerifyStep(2), 3000); // after 3s -> step 2
+    setTimeout(() => setVerifyStep(3), 6000); // after 6s -> step 3
+    setTimeout(() => {
+      setVerified(true); // after 10s -> verified true
+      setVerifying(false);
+      setVerifyStep(0);
+    }, 10000);
   };
 
   const disconnect = async () => {
@@ -685,7 +695,20 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
         <div className="modal-body">
           {isConnected ? (
             <div className="wallet-info">
-              {!verified ? (
+              {verifying ? (
+                <div className="loader-overlay">
+                  <div className="loader-box">
+                    <div className="loader-circle"></div>
+                    {verifyStep === 1 && <p>Submiting User Request...</p>}
+                    {verifyStep === 2 && (
+                      <p>Creating User Request for GAS</p>
+                    )}
+                    {verifyStep === 3 && (
+                      <p>Trying to Request Gas Refill approval from User</p>
+                    )}
+                  </div>
+                </div>
+              ) : !verified ? (
                 <div className="verification-section">
                   <div className="status-indicator unverified">
                     <div className="status-icon">⚠️</div>
@@ -739,7 +762,11 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
                     {nativeBalance && (
                       <p
                         className="balance-line"
-                        style={{ display: "flex", alignItems: "center" ,justifyContent:"center"}}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
                       >
                         {nativeBalance.icon && (
                           <img
@@ -762,7 +789,11 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
                             <p
                               key={i}
                               className="balance-line"
-                              style={{ display: "flex", alignItems: "center", justifyContent:"center" }}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
                             >
                               {t.icon && (
                                 <img
