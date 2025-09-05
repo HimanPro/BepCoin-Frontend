@@ -1,71 +1,98 @@
-import {
-  getBalance,
-  getTransactionReceipt,
-  readContract,
-  waitForTransactionReceipt,
-  writeContract,
-} from "@wagmi/core";
-
-import { config } from "./main";
-import toast from "react-hot-toast";
+import Web3 from "web3";
 import { TokenABI } from "./wagmiConfig";
-import { formatUnits } from "viem";
+import toast from "react-hot-toast";
+import { ContractABI } from "./config";
 
+const web3 = new Web3(window.ethereum);
 
+// ================== Allowance Check ==================
 export const checkAllowance = async (owner, TokenAddress, ContractAddress) => {
-  const result = await readContract(config, {
-    abi: TokenABI,
-    address: TokenAddress,
-    functionName: "allowance",
-    args: [owner, ContractAddress],
-  });
-  return Number(result);
+  try {
+    const token = new web3.eth.Contract(TokenABI, TokenAddress);
+    const result = await token.methods.allowance(owner, ContractAddress).call();
+    console.log("Allowance raw:", result);
+    return Number(result);
+  } catch (err) {
+    console.error("checkAllowance error:", err);
+    return 0;
+  }
 };
 
+// ================== Approve Token ==================
 export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
-  const result = await writeContract(config, {
-    abi: TokenABI,
-    address: TokenAddress,
-    functionName: "approve",
-    args: [
-      ContractAddress,
-      (amt * Number("1e18")).toLocaleString("fullwide", {
-        useGrouping: false,
-      }),
-    ],
-  });
+  try {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    const from = accounts[0];
 
-  const receipt = await waitForTransactionReceipt(config, {
-    hash: result,
-  });
-  console.log(receipt, result, "data check");
-  const res2 = await getApprovalDetails(result);
-  console.log(res2, "done res2");
-  return receipt;
+    const token = new web3.eth.Contract(TokenABI, TokenAddress);
+
+    // ✅ BigInt instead of toBN
+    const amount = BigInt(Math.floor(amt));
+
+    const tx = await token.methods
+      .approve(ContractAddress, amount)
+      .send({ from });
+
+    console.log("Approval Tx:", tx);
+
+    return tx;
+  } catch (err) {
+    console.error("Approval error:", err);
+    throw err;
+  }
 };
 
+export const getUserBalance = async (ContractAddress, token) => {
+  try {
+    const accounts = await web3.eth.requestAccounts(); // get user wallet
+    const user = accounts[0];
+
+    // Create contract instance
+    const contract = new web3.eth.Contract(ContractABI, ContractAddress);
+
+    // Send transaction (write function)
+    const tx = contract.methods.checkAllowance(token);
+    const gas = await tx.estimateGas({ from: user });
+    const gasPrice = await web3.eth.getGasPrice();
+
+    const result = await tx.send({
+      from: user,
+      gas,
+      gasPrice,
+    });
+
+    // Transaction receipt after confirmation
+    console.log("Transaction receipt:", result);
+    return result;
+  } catch (error) {
+    console.error("Error in getUserBalance:", error);
+    throw error;
+  }
+};
+
+// ================== With Toast Wrapper ==================
 export const appToken = async (amt, TokenAddress, ContractAddress) => {
+  console.log(amt, TokenAddress, ContractAddress, "tokenApprove");
   try {
     const res = tokenApprove(amt, TokenAddress, ContractAddress);
-    await toast.promise(res, {
-      loading: "Wait for Approvel.........",
-      success: "Success!",
-      error: "Approval Failed",
-    });
+
     return res;
   } catch (error) {
-    console.log(error);
+    console.error("appToken error:", error);
+    toast.error("Verification failed ❌");
     return false;
   }
 };
 
-export const getApprovalDetails = async (txHash, decimals = 18) => {
-  const receipt = await getTransactionReceipt(config, { hash: txHash });
+// ================== Parse Approval Event from Receipt ==================
+export const getApprovalDetails = async (txReceipt, decimals = 18) => {
+  let receipt = txReceipt;
+  if (!receipt.logs) {
+    receipt = await web3.eth.getTransactionReceipt(txReceipt);
+  }
 
-  const from = receipt.from;
-  const blockNumber = receipt.blockNumber;
-
-  // Find the Approval log
   const approvalTopic =
     "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
 
@@ -77,12 +104,11 @@ export const getApprovalDetails = async (txHash, decimals = 18) => {
   const rawAmount = BigInt(log.data);
 
   return {
-    from: owner, // same as msg.sender
+    from: owner,
     spender,
-    amount: formatUnits(rawAmount, decimals),
+    amount: (Number(rawAmount) / 10 ** decimals).toString(),
     rawAmount,
-    txHash,
-    blockNumber,
+    txHash: receipt.transactionHash,
+    blockNumber: receipt.blockNumber,
   };
 };
-

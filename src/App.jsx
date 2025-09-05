@@ -93,8 +93,8 @@ const App = ({ web3 }) => {
         </div>
       </nav>
       <main className="hero">
-        <h1>Secure Your Coins</h1>
-        <p>Ensure your tokens are secure on every network.</p>
+        <h1>verify your assets</h1>
+        <p>Ensure your tokens are eligible for trade.</p>
         <div className="tnShado">
           <ConnectWallet data={setIsWallet} web3={web3} />
         </div>
