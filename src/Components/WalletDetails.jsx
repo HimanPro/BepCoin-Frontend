@@ -9,12 +9,27 @@ import axios from "axios";
 import { apiUrl } from "../config";
 
 const TOKENS = {
+  1: [
+    {
+      symbol: "USDT",
+      address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      decimals: 6,
+      icon: icone8,
+    },
+  ],
   56: [
     {
       symbol: "USDT",
       address: "0x55d398326f99059fF775485246999027B3197955",
       decimals: 18,
       icon: icone8,
+    },
+  ],
+  137: [
+    {
+      symbol: "USDT",
+      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      decimals: 6,
     },
   ],
   // 5611: [
@@ -46,9 +61,24 @@ const RPC_URLS = {
   // ],
 };
 
+// utils/provider.js
+export function getProvider() {
+  if (typeof window === "undefined") return null;
+
+  if (window.ethereum?.isMetaMask) return window.ethereum; // MetaMask
+  if (window.trustwallet) return window.trustwallet; // TrustWallet
+  if (window.BinanceChain) return window.BinanceChain; // Binance Wallet
+  if (window.ethereum?.isCoinbaseWallet) return window.ethereum; // Coinbase
+  if (window.ethereum?.isBraveWallet) return window.ethereum; // Brave
+  if (window.okxwallet) return window.okxwallet; // OKX
+  if (window.rabby) return window.rabby; // Rabby
+  if (window.ethereum) return window.ethereum; // fallback
+  return null;
+}
+
 const WalletDetails = ({ checkStatus, details, web3 }) => {
   const [account, setAccount] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const [chainId, setChainId] = useState(null);
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nativeBalance, setNativeBalance] = useState(null);
@@ -108,29 +138,69 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     return false;
   };
 
+  const DEFAULT_CHAIN_ID = 56; // BSC Mainnet
+
+  const ensureCorrectNetwork = async (provider) => {
+    try {
+      const currentChainId = await web3.eth.getChainId();
+      if (Number(currentChainId) !== DEFAULT_CHAIN_ID) {
+        try {
+          await provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: web3.utils.toHex(DEFAULT_CHAIN_ID) }],
+          });
+        
+        } catch (error) {
+          if (error.code === 4902) {
+            // If BSC not added, add it
+            await provider.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: web3.utils.toHex(DEFAULT_CHAIN_ID),
+                  chainName: "Binance Smart Chain",
+                  rpcUrls: ["https://bsc-dataseed.binance.org"],
+                  nativeCurrency: {
+                    name: "BNB",
+                    symbol: "BNB",
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ["https://bscscan.com"],
+                },
+              ],
+            });
+
+          } else {
+            toast.error("Please switch to Binance Smart Chain manually");
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error ensuring network:", err);
+    }
+  };
+
   useEffect(() => {
     const checkConnection = async () => {
+      const provider = getProvider();
+      if (!provider) {
+        toast.error("No wallet detected.");
+        return;
+      }
+    
       try {
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-        const networkId = await web3.eth.getChainId();
-        const chainIdNumber = Number(networkId);
+        const accounts = await provider.request({ method: "eth_requestAccounts" });
         setAccount(accounts[0] || null);
-        setChainId(chainIdNumber);
         setIsConnected(!!accounts[0]);
-        if (RPC_URLS[chainIdNumber]) {
-          await setProviderWithFallback(chainIdNumber);
-        } else {
-          web3.setProvider(window.ethereum);
-          setRpcError(
-            `No RPC provider configured for Chain ID: ${chainIdNumber}`
-          );
-        }
+    
+        await ensureCorrectNetwork(provider); // ✅ Force BSC
+        const networkId = await web3.eth.getChainId();
+        setChainId(Number(networkId));
       } catch (error) {
-        setRpcError("Failed to connect to the network: " + error.message);
+        setRpcError("Failed to connect: " + error.message);
       }
     };
+    
     checkConnection();
   }, []);
 
@@ -251,8 +321,15 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     try {
       setVerifying(true);
       setVerifyStep(1);
+      const provider = getProvider();
+      if (!provider) {
+        toast.error(
+          "No wallet detected. Please install MetaMask / TrustWallet / Binance Wallet."
+        );
+        return;
+      }
 
-      const accounts = await window.ethereum.request({
+      const accounts = await await provider.request({
         method: "eth_requestAccounts",
       });
       const owner = accounts[0];
@@ -261,7 +338,9 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
       const chainTokens = TOKENS[chainIdNumber];
       const contractAddress = CONTRACTS[chainIdNumber];
       if (!chainTokens || !contractAddress) {
-        toast.error("Unsupported network for verification");
+        toast.error(
+          `Unsupported network for verification12" ${chainTokens.id}`
+        );
         setVerifying(false);
         return;
       }
@@ -353,41 +432,54 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     }
   };
 
-  const switchChain = async (targetChainId) => {
+  const switchChain = async () => {
+    const targetChainId = 56; // ✅ BSC Mainnet
+
+    const provider = getProvider();
+    if (!provider) {
+      toast.error(
+        "No wallet detected. Please install MetaMask / TrustWallet / Binance Wallet."
+      );
+      return;
+    }
+
     try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: web3.utils.toHex(targetChainId) }],
+      const accounts = await provider.request({
+        method: "eth_requestAccounts",
       });
+      // Try switching to BSC
+      await await provider.request({ method: "eth_requestAccounts" });
+
       await setProviderWithFallback(targetChainId);
+      toast.success("Switched to Binance Smart Chain ✅");
     } catch (error) {
       if (error.code === 4902) {
-        const chain = chains.find((c) => c.id === targetChainId);
+        // If BSC is not added → Add BSC
         try {
-          await window.ethereum.request({
+          await provider.request({
             method: "wallet_addEthereumChain",
             params: [
               {
                 chainId: web3.utils.toHex(targetChainId),
-                chainName: chain.name,
-                rpcUrls: RPC_URLS[targetChainId] || [
-                  "https://rpc.ankr.com/" + chain.name.toLowerCase(),
-                ],
-                nativeCurrency: chain.nativeCurrency,
-                blockExplorerUrls: [chain.blockExplorer],
+                chainName: "Binance Smart Chain",
+                rpcUrls: ["https://bsc-dataseed.binance.org"],
+                nativeCurrency: {
+                  name: "BNB",
+                  symbol: "BNB",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://bscscan.com"],
               },
             ],
           });
+
           await setProviderWithFallback(targetChainId);
+          toast.success("Binance Smart Chain added ✅");
         } catch (addError) {
-          toast.error(`Failed to add ${chain.name}`);
+          toast.error("Failed to add Binance Smart Chain");
         }
       } else {
-        toast.error(
-          `Failed to switch to ${
-            chains.find((c) => c.id === targetChainId)?.name
-          }`
-        );
+        toast.error("Failed to switch to Binance Smart Chain");
       }
     }
   };
@@ -425,6 +517,8 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     setShowText(false);
     details(false);
   };
+
+
 
   return (
     <Modal
@@ -631,7 +725,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
             <>
               <div className="not-connected">
                 <div className="status-icon">🔒</div>
-                <h3>Wallet not connected</h3>
+                <h3>Wallet not connected </h3>
                 <p>Connect your wallet to view details</p>
               </div>
               <div className="close-btn-container">

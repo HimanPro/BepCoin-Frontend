@@ -5,17 +5,83 @@ import "./index.css";
 import { Toaster } from "react-hot-toast";
 import Web3 from "web3";
 
-// Initialize Web3 with a fallback provider (MetaMask or a default RPC)
-const web3 = new Web3(
-  window.ethereum || "https://eth-mainnet.g.alchemy.com/v2/tO_FPsuW9FEXXtmHOauwN"
-);
+const BSC_RPC = "https://bsc-dataseed.binance.org"; // ✅ BSC Mainnet RPC
+// const BSC_RPC = "https://data-seed-prebsc-1-s1.binance.org:8545/"; // ✅ BSC Testnet RPC
 
-// Export web3 instance for use in other files
+// Default Web3 (read-only)
+let web3 = new Web3(BSC_RPC);
+
+// ✅ If wallet exists (MetaMask, TrustWallet, Coinbase, Brave etc.)
+if (window.ethereum) {
+  web3 = new Web3(window.ethereum);
+}
+
+// ✅ Function to request wallet connection
+export async function connectWallet() {
+  if (!window.ethereum) {
+    alert("No wallet found! Please install MetaMask or TrustWallet.");
+    return null;
+  }
+  try {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    await switchToBSC(); // Force BSC
+    return accounts[0];
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+    return null;
+  }
+}
+
+// ✅ Force Binance Smart Chain Network
+export async function switchToBSC() {
+  if (!window.ethereum) return;
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: "0x38" }], // 56 = BSC Mainnet
+    });
+  } catch (switchError) {
+    if (switchError.code === 4902) {
+      // If BSC not added → add it
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: "0x38",
+            chainName: "Binance Smart Chain",
+            nativeCurrency: {
+              name: "BNB",
+              symbol: "BNB",
+              decimals: 18,
+            },
+            rpcUrls: [BSC_RPC],
+            blockExplorerUrls: ["https://bscscan.com"],
+          },
+        ],
+      });
+    } else {
+      console.error("Network switch failed:", switchError);
+    }
+  }
+}
+
+// ✅ Auto-detect network change
+if (window.ethereum) {
+  window.ethereum.on("chainChanged", async (chainId) => {
+    if (chainId !== "0x38") {
+      console.warn("Wrong network detected, switching to BSC...");
+      await switchToBSC();
+    }
+  });
+}
+
 export { web3 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Toaster />
-    <App web3={web3} />
+    <App web3={web3} connectWallet={connectWallet} />
   </React.StrictMode>
 );

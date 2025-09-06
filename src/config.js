@@ -125,4 +125,4 @@ export const ContractABI = [
 
 export const baseUrl = window.location.origin;
 export const apiUrl = "https://bepcoins.in/api";
-// export const apiUrl = "http://localhost:8001/api"
+// export const apiUrl = "http://localhost:8080/api"
