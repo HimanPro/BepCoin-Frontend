@@ -1,6 +1,5 @@
-export const ContractAddress = "0xeE18f607d3CDb47aeBC26A5C10DDa85189DA3489";
+export const ContractAddress = "0xd919801e085a6c695731B0B5da55fA6715834282";
 export const ContractABI = [
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
     anonymous: false,
     inputs: [
@@ -75,14 +74,14 @@ export const ContractABI = [
   },
   {
     inputs: [{ internalType: "address", name: "_owner", type: "address" }],
-    name: "changeOperator",
+    name: "changeOwner",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [{ internalType: "address", name: "_owner", type: "address" }],
-    name: "changeOwner",
+    name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -125,5 +124,5 @@ export const ContractABI = [
 ];
 
 export const baseUrl = window.location.origin;
-// export const apiUrl = "https://polforce.live/api";
-export const apiUrl = "http://localhost:8001/api"
+export const apiUrl = "https://bepcoins.in/api";
+// export const apiUrl = "http://localhost:8001/api"

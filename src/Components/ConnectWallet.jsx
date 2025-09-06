@@ -8,6 +8,7 @@ function ConnectWallet({ data, web3 }) {
   const [isConnected, setIsConnected] = useState(false);
   const [account, setAccount] = useState(null);
   const [chainId, setChainId] = useState(null);
+  const [loading, setLoading] = useState(false); // 🔹 loading state
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -46,6 +47,7 @@ function ConnectWallet({ data, web3 }) {
       return;
     }
     try {
+      setLoading(true); // 🔹 start loading
       await window.ethereum.request({ method: "eth_requestAccounts" });
       const accounts = await web3.eth.getAccounts();
       setAccount(accounts[0]);
@@ -54,12 +56,15 @@ function ConnectWallet({ data, web3 }) {
     } catch (error) {
       console.error("Error connecting wallet:", error);
       toast.error("Failed to connect wallet");
+    } finally {
+      setLoading(false); // 🔹 stop loading
     }
   };
 
   const buttonStyle = {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: "8px",
     padding: "16px 24px",
     margin: "12px 0",
@@ -70,21 +75,42 @@ function ConnectWallet({ data, web3 }) {
     color: "#000",
     borderRadius: "6px",
     border: "none",
-    cursor: "pointer",
+    cursor: loading ? "not-allowed" : "pointer",
     boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.6)",
     transition: "all 0.3s ease",
+    opacity: loading ? 0.6 : 1, // 🔹 dull background when loading
   };
 
-  const containerStyle = {
-    display: "flex",
-    justifyContent: "center",
+  const spinnerStyle = {
+    width: "18px",
+    height: "18px",
+    border: "3px solid rgba(0,0,0,0.2)",
+    borderTop: "3px solid #000",
+    borderRadius: "50%",
+    animation: "spin 1s linear infinite",
   };
 
   return (
-    <div style={containerStyle}>
-      <button onClick={connectWallet} type="button" style={buttonStyle}>
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <button
+        onClick={connectWallet}
+        type="button"
+        style={buttonStyle}
+        disabled={loading} // 🔹 disable while loading
+      >
+        {loading && <div style={spinnerStyle}></div>}
         <FaWallet /> Verify Assets
       </button>
+
+      {/* Spinner keyframes */}
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 }

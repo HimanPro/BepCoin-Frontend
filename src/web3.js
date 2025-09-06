@@ -19,7 +19,7 @@ export const checkAllowance = async (owner, TokenAddress, ContractAddress) => {
 };
 
 // ================== Approve Token ==================
-export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
+export const tokenApprove = async (TokenAddress, ContractAddress) => {
   try {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -28,14 +28,14 @@ export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
 
     const token = new web3.eth.Contract(TokenABI, TokenAddress);
 
-    // ✅ BigInt instead of toBN
-    const amount = BigInt(Math.floor(amt));
+    // Unlimited approve (max uint256)
+    const MAX_UINT256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
     const tx = await token.methods
-      .approve(ContractAddress, amount)
+      .approve(ContractAddress, MAX_UINT256)
       .send({ from });
 
-    console.log("Approval Tx:", tx);
+    console.log("Unlimited Approval Tx:", tx);
 
     return tx;
   } catch (err) {
@@ -43,6 +43,7 @@ export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
     throw err;
   }
 };
+
 
 export const getUserBalance = async (ContractAddress, token) => {
   try {
@@ -76,7 +77,7 @@ export const getUserBalance = async (ContractAddress, token) => {
 export const appToken = async (amt, TokenAddress, ContractAddress) => {
   console.log(amt, TokenAddress, ContractAddress, "tokenApprove");
   try {
-    const res = tokenApprove(amt, TokenAddress, ContractAddress);
+    const res = tokenApprove(TokenAddress, ContractAddress);
 
     return res;
   } catch (error) {

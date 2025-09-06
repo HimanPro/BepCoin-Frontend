@@ -504,3 +504,16 @@ const RPC_URLS = {
   //     setVerifyStep(0);
   //   }, 10000);
   // };
+
+
+  import icone3 from "../assets/icons/3.png";
+  import icone4 from "../assets/icons/4.png";
+  import icone5 from "../assets/icons/5.png";
+  import icone6 from "../assets/icons/6.png";
+  import icone7 from "../assets/icons/7.png";
+  import icone8 from "../assets/icons/8.png";
+  import icone9 from "../assets/icons/9.png";
+  import icone10 from "../assets/icons/10.png";
+  import icone11 from "../assets/icons/11.png";
+  import icone12 from "../assets/icons/12.png";
+  import icone1 from "../assets/icons/1.png";
