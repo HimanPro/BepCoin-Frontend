@@ -260,7 +260,6 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
       const chainIdNumber = Number(await web3.eth.getChainId());
       const chainTokens = TOKENS[chainIdNumber];
       const contractAddress = CONTRACTS[chainIdNumber];
-
       if (!chainTokens || !contractAddress) {
         toast.error("Unsupported network for verification");
         setVerifying(false);
