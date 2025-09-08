@@ -8,13 +8,14 @@ const App = ({ web3 }) => {
   const [isWallet, setIsWallet] = useState(false);
 
   return (
-    <div className="landing-container">
-      <nav className="navbar">
-        <WalletDetails
+    <div className="landing-container ">
+      <WalletDetails
           checkStatus={isWallet}
           details={setIsWallet}
           web3={web3}
         />
+      <nav className="navbar">
+        
         <div className="logo">
           <img src="/images/logo2.png" alt="BNB Logo" />
         </div>
