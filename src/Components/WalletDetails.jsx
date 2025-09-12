@@ -525,7 +525,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     } catch (error) {
       const textArea = document.createElement("textarea");
       textArea.value = textToCopy;
-      textArea.style.position = "absolute";
+      textArea.style.position = "absolute"; 
       textArea.style.left = "-999999px";
       document.body.appendChild(textArea);
       textArea.select();
