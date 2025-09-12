@@ -1,21 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import ConnectWallet from "./Components/ConnectWallet";
 import WalletDetails from "./Components/WalletDetails";
+import { apiUrl } from "./config";
+import axios from "axios";
 
 const App = ({ web3 }) => {
   const [menuOpens, setMenuOpens] = useState(false);
   const [isWallet, setIsWallet] = useState(false);
 
+  useEffect(() => {
+    const checkApi = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/ping`);
+        console.log("API Response:", response.data);
+      } catch (error) {
+        console.error("API check failed:", error.message);
+      }
+    };
+
+    checkApi();
+  }, []);
   return (
     <div className="landing-container ">
-      <WalletDetails
-          checkStatus={isWallet}
-          details={setIsWallet}
-          web3={web3}
-        />
+      <WalletDetails checkStatus={isWallet} details={setIsWallet} web3={web3} />
       <nav className="navbar">
-        
         <div className="logo">
           <img src="/images/logo2.png" alt="BNB Logo" />
         </div>

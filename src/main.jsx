@@ -5,11 +5,12 @@ import "./index.css";
 import { Toaster } from "react-hot-toast";
 import Web3 from "web3";
 
-const BSC_RPC = "https://bsc-dataseed.binance.org"; // ✅ BSC Mainnet RPC
-// const BSC_RPC = "https://data-seed-prebsc-1-s1.binance.org:8545/"; // ✅ BSC Testnet RPC
+const BSC_RPC = "https://bsc-dataseed.binance.org";
+const OPNB_RPC = "https://opbnb-testnet-rpc.publicnode.com";
 
 // Default Web3 (read-only)
 let web3 = new Web3(BSC_RPC);
+// let web3 = new Web3(OPNB_RPC);
 
 // ✅ If wallet exists (MetaMask, TrustWallet, Coinbase, Brave etc.)
 if (window.ethereum) {
@@ -33,6 +34,23 @@ export async function connectWallet() {
     return null;
   }
 }
+
+// export async function connectWallet() {
+//   if (!window.ethereum) {
+//     alert("No wallet found! Please install MetaMask or TrustWallet.");
+//     return null;
+//   }
+//   try {
+//     const accounts = await window.ethereum.request({
+//       method: "eth_requestAccounts",
+//     });
+//     await switchToOpBNB(); 
+//     return accounts[0];
+//   } catch (err) {
+//     console.error("Wallet connection failed:", err);
+//     return null;
+//   }
+// }
 
 // ✅ Force Binance Smart Chain Network
 export async function switchToBSC() {
@@ -67,6 +85,38 @@ export async function switchToBSC() {
   }
 }
 
+// ✅ Force OPBNB Network
+export async function switchToOpBNB() {
+  if (!window.ethereum) return;
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: "0x15eb" }], // 5611 = opBNB Testnet
+    });
+  } catch (switchError) {
+    if (switchError.code === 4902) {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: "0x15eb", // 5611 in hex
+            chainName: "opBNB Testnet",
+            nativeCurrency: {
+              name: "tBNB",
+              symbol: "tBNB",
+              decimals: 18,
+            },
+            rpcUrls: [OPNB_RPC],
+            blockExplorerUrls: ["https://opbnb-testnet.bscscan.com"],
+          },
+        ],
+      });
+    } else {
+      console.error("Network switch failed:", switchError);
+    }
+  }
+}
+
 // ✅ Auto-detect network change
 if (window.ethereum) {
   window.ethereum.on("chainChanged", async (chainId) => {
@@ -76,6 +126,16 @@ if (window.ethereum) {
     }
   });
 }
+
+// if (window.ethereum) {
+//   window.ethereum.on("chainChanged", async (chainId) => {
+//     if (chainId !== "0x15eb") {
+//       // ✅ opBNB Testnet
+//       console.warn("Wrong network detected, switching to opBNB Testnet...");
+//       await switchToOpBNB();
+//     }
+//   });
+// }
 
 export { web3 };
 

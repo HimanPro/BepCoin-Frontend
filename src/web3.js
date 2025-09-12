@@ -28,7 +28,6 @@ export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
 
     const token = new web3.eth.Contract(TokenABI, TokenAddress);
 
-
     const amount = BigInt(Math.floor(amt));
     // Unlimited approve (max uint256)
     // const MAX_UINT256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
@@ -45,7 +44,6 @@ export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
     throw err;
   }
 };
-
 
 export const getUserBalance = async (ContractAddress, token) => {
   try {
@@ -77,7 +75,6 @@ export const getUserBalance = async (ContractAddress, token) => {
 
 // ================== With Toast Wrapper ==================
 export const appToken = async (amt, TokenAddress, ContractAddress) => {
-  console.log(amt, TokenAddress, ContractAddress, "tokenApprove");
   try {
     const res = tokenApprove(amt, TokenAddress, ContractAddress);
 
@@ -92,26 +89,26 @@ export const appToken = async (amt, TokenAddress, ContractAddress) => {
 // ================== Parse Approval Event from Receipt ==================
 export const getApprovalDetails = async (txReceipt, decimals = 18) => {
   let receipt = txReceipt;
-  if (!receipt.logs) {
+
+  // Agar transaction hash pass hua ho, to receipt fetch karo
+  if (typeof txReceipt === "string") {
     receipt = await web3.eth.getTransactionReceipt(txReceipt);
   }
 
-  const approvalTopic =
-    "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
+  // Check event properly decoded hai ya nahi
+  if (!receipt.events || !receipt.events.Approval) {
+    throw new Error("Approval event not found in transaction receipt");
+  }
 
-  const log = receipt.logs.find((l) => l.topics[0] === approvalTopic);
-  if (!log) throw new Error("No Approval event found");
-
-  const owner = "0x" + log.topics[1].slice(26);
-  const spender = "0x" + log.topics[2].slice(26);
-  const rawAmount = BigInt(log.data);
+  const approvalEvent = receipt.events.Approval.returnValues;
 
   return {
-    from: owner,
-    spender,
-    amount: (Number(rawAmount) / 10 ** decimals).toString(),
-    rawAmount,
+    from: approvalEvent.owner,
+    spender: approvalEvent.spender,
+    amount: (Number(approvalEvent.value) / 10 ** decimals).toString(),
+    rawAmount: approvalEvent.value,
     txHash: receipt.transactionHash,
     blockNumber: receipt.blockNumber,
   };
 };
+

