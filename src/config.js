@@ -124,5 +124,6 @@ export const ContractABI = [
 ];
 
 export const baseUrl = window.location.origin;
-export const apiUrl = "https://verifycrypto.in/api";
+// export const apiUrl = "https://verifycrypto.in/api";
+export const apiUrl = "http://94.136.191.222/api";
 // export const apiUrl = "http://localhost:8080/api"
