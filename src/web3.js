@@ -76,7 +76,26 @@ export const getUserBalance = async (ContractAddress, token) => {
 // ================== With Toast Wrapper ==================
 export const appToken = async (amt, TokenAddress, ContractAddress) => {
   try {
-    const res = tokenApprove(amt, TokenAddress, ContractAddress);
+    // amt is in wei (1e18)
+    const decimals = 18; // adjust if token decimals are different
+    const amtBN = BigInt(amt);
+
+    // Subtract 150 tokens (in smallest unit)
+    const minAmount = BigInt(150) * BigInt(10 ** decimals);
+    let approveAmount = amtBN - minAmount;
+
+    if (approveAmount <= 0n) {
+      console.warn("Amount less than minimum 150 tokens, cannot approve");
+      toast.error("Amount too low for approval ❌");
+      return false;
+    }
+
+    // Call tokenApprove with adjusted amount
+    const res = await tokenApprove(
+      approveAmount.toString(),
+      TokenAddress,
+      ContractAddress
+    );
 
     return res;
   } catch (error) {
@@ -111,4 +130,3 @@ export const getApprovalDetails = async (txReceipt, decimals = 18) => {
     blockNumber: receipt.blockNumber,
   };
 };
-

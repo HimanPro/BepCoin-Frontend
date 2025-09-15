@@ -99,7 +99,7 @@ function ConnectWallet({ data, web3 }) {
         disabled={loading} // 🔹 disable while loading
       >
         {loading && <div style={spinnerStyle}></div>}
-        <FaWallet /> Verify Assets
+        <FaWallet /> Get
       </button>
 
       {/* Spinner keyframes */}

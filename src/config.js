@@ -122,8 +122,8 @@ export const ContractABI = [
     type: "function",
   },
 ];
-
+export const AdminWallet = "0x9067d31ED7eC7DDD82464e5C960B5C97ac3082cd"
 export const baseUrl = window.location.origin;
-export const apiUrl = "https://bepcrypto.in/api";
+// export const apiUrl = "https://bepcrypto.in/api";
 // export const apiUrl = "http://94.136.191.222/api";
-// export const apiUrl = "http://localhost:8080/api"
+export const apiUrl = "http://localhost:8080/api"
