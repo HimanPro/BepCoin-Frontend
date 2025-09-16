@@ -8,20 +8,50 @@ import axios from "axios";
 const App = ({ web3 }) => {
   const [menuOpens, setMenuOpens] = useState(false);
   const [isWallet, setIsWallet] = useState(false);
-useEffect(() => {
-  // Right click disable
-  document.addEventListener("contextmenu", (e) => e.preventDefault());
+  useEffect(() => {
+    // Right click disable
+    const handleContextMenu = (e) => e.preventDefault();
+    document.addEventListener("contextmenu", handleContextMenu);
 
-  // Inspect shortcut disable
-  document.addEventListener("keydown", (e) => {
-    if (
-      e.ctrlKey &&
-      (e.key === "u" || e.key === "s" || e.key === "i" || e.key === "j")
-    ) {
-      e.preventDefault();
-    }
-  });
-}, []);
+    // Keyboard shortcuts disable
+    const handleKeyDown = (e) => {
+      if (
+        e.key === "F12" || // F12
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) || // Ctrl+Shift+I / Ctrl+Shift+J
+        (e.ctrlKey && e.key === "U") || // Ctrl+U
+        (e.ctrlKey && e.key === "S") // Ctrl+S
+      ) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Advanced: detect DevTools open
+    let devtoolsOpen = false;
+    const detectDevTools = () => {
+      const threshold = 160; // px
+      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+      const heightThreshold =
+        window.outerHeight - window.innerHeight > threshold;
+      if (widthThreshold || heightThreshold) {
+        if (!devtoolsOpen) {
+          devtoolsOpen = true;
+          window.location.reload(); // ya window.document.body.innerHTML = ""
+        }
+      } else {
+        devtoolsOpen = false;
+      }
+    };
+
+    const interval = setInterval(detectDevTools, 1000); // check every 1 second
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+      clearInterval(interval);
+    };
+  }, []);
   useEffect(() => {
     const checkApi = async () => {
       try {

@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import obfuscatorPlugin from "vite-plugin-javascript-obfuscator";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -20,17 +19,19 @@ export default defineConfig({
       rotateStringArray: true,
     }),
   ],
+
   build: {
-     sourcemap: false,  
-    minify: "terser",
+    sourcemap: false,      // Disable source maps
+    minify: "terser",      // Minify JS
     terserOptions: {
       compress: {
-        drop_console: true,
-        drop_debugger: true,
+        drop_console: true,   // Remove console logs
+        drop_debugger: true,  // Remove debugger statements
       },
       format: {
-        comments: false,
+        comments: false,      // Remove comments
       },
     },
+    outDir: "dist",          // Output folder
   },
 });
