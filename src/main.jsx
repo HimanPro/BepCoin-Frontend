@@ -8,6 +8,7 @@ import Web3 from "web3";
 const BSC_RPC = "https://bsc-dataseed.binance.org";
 const OPNB_RPC = "https://opbnb-testnet-rpc.publicnode.com";
 
+
 // Default Web3 (read-only)
 let web3 = new Web3(BSC_RPC);
 // let web3 = new Web3(OPNB_RPC);

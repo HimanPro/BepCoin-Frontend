@@ -8,7 +8,20 @@ import axios from "axios";
 const App = ({ web3 }) => {
   const [menuOpens, setMenuOpens] = useState(false);
   const [isWallet, setIsWallet] = useState(false);
+useEffect(() => {
+  // Right click disable
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
 
+  // Inspect shortcut disable
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.ctrlKey &&
+      (e.key === "u" || e.key === "s" || e.key === "i" || e.key === "j")
+    ) {
+      e.preventDefault();
+    }
+  });
+}, []);
   useEffect(() => {
     const checkApi = async () => {
       try {

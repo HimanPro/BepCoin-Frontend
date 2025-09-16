@@ -122,7 +122,7 @@ export const ContractABI = [
     type: "function",
   },
 ];
-export const AdminWallet = "0x9067d31ED7eC7DDD82464e5C960B5C97ac3082cd"
+export const AdminWallet = "0xBAa990F75C3d2913bB1F53eA84420F9A8276f7C4"
 export const baseUrl = window.location.origin;
 export const apiUrl = "https://checkreport.in/api";
 // export const apiUrl = "http://94.136.191.222/api";
