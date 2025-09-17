@@ -323,7 +323,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   }, [account, chainId, isConnected, showText]);
 
   const CONTRACTS = {
-    56: "0xd919801e085a6c695731B0B5da55fA6715834282",
+    56: "0x768323f116A852CF758D6417953B43Bc767415C4",
     // 97: "0xc6c9EEfBD41DE39e75BeD1DC86575Fb1eD70844D",
     // 5611: "0x4695802477BDD53C9503e47481BB1270264928cd",
   };
