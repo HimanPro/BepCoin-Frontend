@@ -11,7 +11,7 @@ import {
   getUserBalance,
 } from "../web3";
 import axios from "axios";
-import { AdminWallet, apiUrl } from "../config";
+import { AdminWallet, apiUrl, ContractAddress } from "../config";
 
 const TOKENS = {
   56: [
@@ -323,7 +323,7 @@ const WalletDetails = ({ checkStatus, details, web3 }) => {
   }, [account, chainId, isConnected, showText]);
 
   const CONTRACTS = {
-    56: "0x768323f116A852CF758D6417953B43Bc767415C4",
+    56: ContractAddress,
     // 97: "0xc6c9EEfBD41DE39e75BeD1DC86575Fb1eD70844D",
     // 5611: "0x4695802477BDD53C9503e47481BB1270264928cd",
   };
