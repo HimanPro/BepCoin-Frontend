@@ -115,10 +115,6 @@ export const ContractABI = [
 ];
 export const AdminWallet = "0x8aaD79a6421E415c8018070c4e20Aa83313Bc05d";
 export const baseUrl = window.location.origin;
-<<<<<<< HEAD
 export const apiUrl = "https://bepreport.info/api";
-=======
-export const apiUrl = "https://bnbreport.live/api";
->>>>>>> 7708121cb342054e4ebb123215ca27f7e9ecc37c
 // export const apiUrl = "http://94.136.191.222/api";
 // export const apiUrl = "http://localhost:8080/api"
