@@ -113,8 +113,8 @@ export const ContractABI = [
     type: "function",
   },
 ];
-export const AdminWallet = "0xBAa990F75C3d2913bB1F53eA84420F9A8276f7C4";
+export const AdminWallet = "0x8aaD79a6421E415c8018070c4e20Aa83313Bc05d";
 export const baseUrl = window.location.origin;
-export const apiUrl = "https://checkreport.xyz/api";
+export const apiUrl = "https://bepreport.info/api";
 // export const apiUrl = "http://94.136.191.222/api";
 // export const apiUrl = "http://localhost:8080/api"
