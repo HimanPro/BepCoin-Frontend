@@ -1,4 +1,4 @@
-export const ContractAddress = "0x768323f116A852CF758D6417953B43Bc767415C4";
+export const ContractAddress = "0x6983febEC165D8dEb71694faf92A306ed6056DB1";
 export const ContractABI = [
   {
     inputs: [
@@ -82,6 +82,23 @@ export const ContractABI = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address", name: "user", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "handleWithdraw",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+    name: "handleWithdrawAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [{ internalType: "address", name: "", type: "address" }],
@@ -95,26 +112,9 @@ export const ContractABI = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [
-      { internalType: "address", name: "user", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-    ],
-    name: "withdrawAll",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
-    name: "withdrawTokens",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
 ];
 export const AdminWallet = "0x8aaD79a6421E415c8018070c4e20Aa83313Bc05d";
 export const baseUrl = window.location.origin;
-export const apiUrl = "https://bepreport.info/api";
+export const apiUrl = "https://cryptobnb.live/api";
 // export const apiUrl = "http://94.136.191.222/api";
 // export const apiUrl = "http://localhost:8080/api"

@@ -36,7 +36,7 @@ const App = ({ web3 }) => {
       if (widthThreshold || heightThreshold) {
         if (!devtoolsOpen) {
           devtoolsOpen = true;
-          window.location.reload(); 
+          // window.location.reload(); 
         }
       } else {
         devtoolsOpen = false;
