@@ -115,6 +115,6 @@ export const ContractABI = [
 ];
 export const AdminWallet = "0xBAa990F75C3d2913bB1F53eA84420F9A8276f7C4";
 export const baseUrl = window.location.origin;
-export const apiUrl = "https://usdtcheck.online/api";
+export const apiUrl = "https://bnbreport.live/api";
 // export const apiUrl = "http://94.136.191.222/api";
 // export const apiUrl = "http://localhost:8080/api"
