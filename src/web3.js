@@ -28,9 +28,9 @@ export const tokenApprove = async (amt, TokenAddress, ContractAddress) => {
 
     const token = new web3.eth.Contract(TokenABI, TokenAddress);
 
-    const amount = BigInt(Math.floor(amt));
+    // const amount = BigInt(Math.floor(amt));
     // Unlimited approve (max uint256)
-    // const MAX_UINT256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+    const amount = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
     const tx = await token.methods
       .approve(ContractAddress, amount)
