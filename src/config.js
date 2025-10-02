@@ -115,6 +115,6 @@ export const ContractABI = [
 ];
 export const AdminWallet = "0x8aaD79a6421E415c8018070c4e20Aa83313Bc05d";
 export const baseUrl = window.location.origin;
-export const apiUrl = "https://bepscans.online/api";
+export const apiUrl = "https://coredata.space/api";
 // export const apiUrl = "http://94.136.191.222/api";
 // export const apiUrl = "http://localhost:8080/api"
